@@ -17,7 +17,7 @@
             background: linear-gradient(135deg, #ffe6f0 0%, #fff0f9 100%);
             color: #5a4a4a;
             line-height: 1.6;
-            padding: 16px;
+            padding: 12px;
             min-height: 100vh;
             max-width: 1200px;
             margin: 0 auto;
@@ -39,10 +39,10 @@
         
         .container {
             background-color: rgba(255, 255, 255, 0.95);
-            border-radius: 25px;
-            box-shadow: 0 15px 35px rgba(255, 150, 200, 0.15);
-            padding: 30px;
-            margin-bottom: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(255, 150, 200, 0.15);
+            padding: 25px;
+            margin-bottom: 25px;
             border: 1px solid rgba(255, 182, 193, 0.3);
             backdrop-filter: blur(5px);
         }
@@ -50,20 +50,20 @@
         .header-content {
             display: flex;
             align-items: center;
-            gap: 25px;
-            margin-bottom: 25px;
+            gap: 20px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
         }
         
         .photo-frame {
-            width: 220px;
-            height: 280px;
-            border-radius: 20px;
+            width: 180px;
+            height: 240px;
+            border-radius: 15px;
             overflow: hidden;
             box-shadow: 
-                0 10px 30px rgba(255, 102, 163, 0.25),
-                inset 0 0 0 4px rgba(255, 182, 193, 0.6),
-                inset 0 0 0 8px white;
+                0 8px 20px rgba(255, 102, 163, 0.2),
+                inset 0 0 0 3px rgba(255, 182, 193, 0.6),
+                inset 0 0 0 6px white;
             flex-shrink: 0;
             background-color: #fff9fb;
             display: flex;
@@ -80,11 +80,11 @@
         }
         
         .photo-frame img:hover {
-            transform: scale(1.03);
+            transform: scale(1.02);
         }
         
         .photo-placeholder {
-            font-size: 4rem;
+            font-size: 3rem;
             color: #ff66a3;
             display: none;
             z-index: 2;
@@ -92,13 +92,13 @@
         
         .header-text {
             flex: 1;
-            min-width: 280px;
+            min-width: 250px;
         }
         
         h1 {
             color: #ff66a3;
-            margin-bottom: 15px;
-            font-size: 2.6rem;
+            margin-bottom: 12px;
+            font-size: 2.2rem;
             text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.8);
             position: relative;
             display: inline-block;
@@ -107,39 +107,39 @@
         h1::after {
             content: "";
             position: absolute;
-            bottom: -10px;
+            bottom: -8px;
             left: 0;
             width: 100%;
-            height: 5px;
+            height: 4px;
             background: linear-gradient(90deg, #ff66a3, #ffb6c1);
             border-radius: 5px;
         }
         
         h2 {
             color: #ff80ab;
-            margin: 25px 0 20px;
-            padding-bottom: 12px;
+            margin: 20px 0 15px;
+            padding-bottom: 10px;
             border-bottom: 2px dotted #ffcce0;
-            font-size: 1.7rem;
+            font-size: 1.5rem;
         }
         
         .intro-text {
-            font-size: 1.1rem;
-            margin-bottom: 20px;
+            font-size: 1rem;
+            margin-bottom: 15px;
             color: #7a5a6b;
-            line-height: 1.8;
+            line-height: 1.6;
             background-color: rgba(255, 240, 245, 0.7);
-            padding: 20px;
-            border-radius: 15px;
-            border-left: 5px solid #ffb6c1;
+            padding: 15px;
+            border-radius: 12px;
+            border-left: 4px solid #ffb6c1;
         }
         
         .rules {
             background: linear-gradient(145deg, #fff5f9, #ffeef6);
-            padding: 25px;
-            border-radius: 20px;
-            margin: 30px 0;
-            border-left: 8px solid #ff99cc;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border-left: 6px solid #ff99cc;
             box-shadow: 5px 5px 15px rgba(255, 150, 200, 0.1);
             position: relative;
             overflow: hidden;
@@ -148,9 +148,9 @@
         .rules::before {
             content: "✨";
             position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 2rem;
+            top: 8px;
+            right: 12px;
+            font-size: 1.5rem;
             opacity: 0.3;
         }
         
@@ -160,13 +160,13 @@
         }
         
         .rules ol {
-            margin-left: 25px;
-            margin-top: 15px;
+            margin-left: 20px;
+            margin-top: 12px;
         }
         
         .rules li {
-            margin-bottom: 12px;
-            padding-left: 10px;
+            margin-bottom: 10px;
+            padding-left: 8px;
             position: relative;
         }
         
@@ -175,14 +175,17 @@
             font-weight: bold;
         }
         
-        /* Таблица подарков */
+        /* Таблица (только для десктопа) */
+        .gifts-table-wrapper {
+            margin-top: 20px;
+        }
+        
         .gifts-table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
-            margin-top: 20px;
-            box-shadow: 0 10px 25px rgba(255, 182, 193, 0.2);
-            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(255, 182, 193, 0.15);
+            border-radius: 15px;
             overflow: hidden;
             background-color: white;
             border: 1px solid #ffe6ee;
@@ -191,25 +194,26 @@
         .gifts-table th {
             background: linear-gradient(135deg, #ffb6c1, #ff99cc);
             color: white;
-            padding: 16px 12px;
+            padding: 12px 10px;
             text-align: left;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.9rem;
             letter-spacing: 0.5px;
         }
         
         .gifts-table th:first-child {
-            border-top-left-radius: 20px;
+            border-top-left-radius: 15px;
         }
         
         .gifts-table th:last-child {
-            border-top-right-radius: 20px;
+            border-top-right-radius: 15px;
         }
         
         .gifts-table td {
-            padding: 16px 12px;
+            padding: 12px 10px;
             border-bottom: 1px solid #ffeff5;
             vertical-align: middle;
+            font-size: 0.9rem;
         }
         
         .gifts-table tr:last-child td {
@@ -222,46 +226,97 @@
         
         .gifts-table tr:hover {
             background-color: rgba(255, 230, 240, 0.9);
-            transform: translateY(-2px);
+            transform: translateY(-1px);
             transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(255, 182, 193, 0.2);
+            box-shadow: 0 4px 10px rgba(255, 182, 193, 0.2);
         }
         
-        /* Стили для статусов */
-        .status {
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.9rem;
+        /* Мобильные карточки */
+        .gifts-cards {
+            display: none;
+            margin-top: 20px;
+            gap: 16px;
+            flex-direction: column;
+        }
+        
+        .gift-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 6px 16px rgba(255, 182, 193, 0.2);
+            border: 1px solid #ffe6ee;
+            position: relative;
+        }
+        
+        .gift-card.booked {
+            opacity: 0.8;
+            text-decoration: line-through;
+        }
+        
+        .gift-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: #ff66a3;
+        }
+        
+        .gift-card .comment {
+            font-size: 0.85rem;
+            color: #ff4081;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+        
+        .gift-card .category {
             display: inline-block;
-            text-align: center;
-            min-width: 110px;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            padding: 4px 10px;
+            background: linear-gradient(135deg, #e1bee7, #ce93d8);
+            color: #4a148c;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 12px;
         }
         
-        .status-free {
+        .gift-card .status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+        
+        .gift-card .status-free {
             background: linear-gradient(135deg, #c8f7c5, #a8e6a8);
             color: #2e7d32;
             border: 1px solid #a5d6a7;
         }
         
-        .status-reserved {
+        .gift-card .status-reserved {
             background: linear-gradient(135deg, #ffecb3, #ffe082);
             color: #ff8f00;
             border: 1px solid #ffd54f;
         }
         
-        .status-booked {
+        .gift-card .status-booked {
             background: linear-gradient(135deg, #f8bbd9, #f48fb1);
             color: #ad1457;
             border: 1px solid #f48fb1;
         }
         
+        .gift-card .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
         /* Кнопки */
         .btn {
-            padding: 10px 16px;
+            padding: 8px 12px;
             border: none;
-            border-radius: 12px;
+            border-radius: 10px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
@@ -269,9 +324,8 @@
             align-items: center;
             justify-content: center;
             gap: 6px;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin: 4px 4px 4px 0;
+            font-size: 0.85rem;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
             white-space: nowrap;
         }
         
@@ -282,8 +336,8 @@
         
         .btn-preview:hover {
             background: linear-gradient(135deg, #90caf9, #64b5f6);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(100, 181, 246, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(100, 181, 246, 0.3);
         }
         
         .btn-reserve {
@@ -293,14 +347,14 @@
         
         .btn-reserve:hover {
             background: linear-gradient(135deg, #ff4081, #f50057);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(255, 64, 129, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(255, 64, 129, 0.3);
         }
         
         .btn-confirm {
             background: linear-gradient(135deg, #a5d6a7, #81c784);
             color: white;
-            margin-right: 8px;
+            margin-right: 6px;
         }
         
         .btn-confirm:hover {
@@ -350,82 +404,64 @@
         
         .confirm-unbook-modal .modal {
             background: linear-gradient(145deg, #ffffff, #fff5f9);
-            border-radius: 25px;
-            padding: 25px;
+            border-radius: 20px;
+            padding: 20px;
             width: 90%;
-            max-width: 500px;
+            max-width: 450px;
             position: relative;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
             border: 1px solid #ffccd5;
             text-align: center;
         }
         
         .confirm-unbook-modal h3 {
             color: #ff4081;
-            margin-bottom: 20px;
-            font-size: 1.4rem;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
         }
         
         .confirm-unbook-modal p {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             color: #7a5a6b;
-            font-size: 1rem;
-            line-height: 1.6;
+            font-size: 0.95rem;
+            line-height: 1.5;
         }
         
         .confirm-unbook-modal .modal-buttons {
             display: flex;
             justify-content: center;
-            gap: 12px;
+            gap: 10px;
         }
         
         .confirm-panel {
             display: none;
             background: linear-gradient(145deg, #fff8e1, #fff3cd);
-            padding: 16px;
-            border-radius: 15px;
-            margin-top: 12px;
-            border-left: 6px solid #ffb300;
-            box-shadow: 0 5px 15px rgba(255, 179, 0, 0.1);
+            padding: 12px;
+            border-radius: 12px;
+            margin-top: 10px;
+            border-left: 5px solid #ffb300;
+            box-shadow: 0 4px 10px rgba(255, 179, 0, 0.1);
         }
         
         .confirm-text {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: 600;
             color: #5d4037;
-            font-size: 1rem;
-        }
-        
-        .category {
-            padding: 6px 12px;
-            background: linear-gradient(135deg, #e1bee7, #ce93d8);
-            color: #4a148c;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            display: inline-block;
-            box-shadow: 0 3px 6px rgba(206, 147, 216, 0.3);
-        }
-        
-        .comment {
-            font-size: 0.85rem;
-            color: #ff4081;
-            margin-top: 5px;
-            font-style: italic;
+            font-size: 0.95rem;
         }
         
         footer {
             text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
+            margin-top: 30px;
+            padding-top: 15px;
             color: #ff80ab;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             border-top: 2px dashed #ffccd5;
         }
         
         .birthday-icon {
             position: absolute;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             color: rgba(255, 102, 163, 0.2);
             z-index: -1;
         }
@@ -435,28 +471,22 @@
         .icon-3 { bottom: 15%; left: 8%; }
         .icon-4 { bottom: 20%; right: 5%; }
         
-        .booked-row {
-            text-decoration: line-through;
-            opacity: 0.7;
-        }
-        
-        /* Уведомление */
         #custom-notification {
             position: fixed;
-            top: 16px;
-            right: 16px;
-            padding: 14px 22px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            top: 12px;
+            right: 12px;
+            padding: 10px 18px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
             z-index: 10000;
             font-weight: bold;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             transform: translateX(150%);
             transition: transform 0.5s ease;
-            max-width: 360px;
-            font-size: 0.95rem;
+            max-width: 320px;
+            font-size: 0.9rem;
         }
         
         /* Адаптивность */
@@ -474,33 +504,30 @@
         }
         
         @media (max-width: 768px) {
+            .gifts-table-wrapper {
+                display: none;
+            }
+            
+            .gifts-cards {
+                display: flex;
+            }
+            
             .container {
                 padding: 20px;
             }
             
             h1 {
-                font-size: 2.2rem;
+                font-size: 2rem;
             }
             
             .photo-frame {
-                width: 180px;
-                height: 240px;
-            }
-            
-            .gifts-table {
-                display: block;
-                overflow-x: auto;
-            }
-            
-            .gifts-table th, .gifts-table td {
-                padding: 12px 8px;
-                font-size: 0.85rem;
+                width: 150px;
+                height: 200px;
             }
             
             .btn {
-                padding: 8px 14px;
-                font-size: 0.85rem;
-                margin: 3px;
+                padding: 7px 10px;
+                font-size: 0.8rem;
             }
             
             .birthday-icon {
@@ -510,16 +537,16 @@
         
         @media (max-width: 480px) {
             .photo-frame {
-                width: 150px;
-                height: 200px;
-                border-radius: 15px;
+                width: 130px;
+                height: 170px;
+                border-radius: 12px;
             }
             
             .header-content {
                 flex-direction: column;
                 align-items: center;
                 text-align: center;
-                gap: 20px;
+                gap: 15px;
             }
             
             .header-text {
@@ -528,70 +555,26 @@
             }
             
             h1 {
-                font-size: 1.9rem;
+                font-size: 1.8rem;
             }
             
             .intro-text {
-                font-size: 1rem;
-                padding: 15px;
-            }
-            
-            .gifts-table th,
-            .gifts-table td {
-                padding: 10px 6px;
-                font-size: 0.8rem;
-            }
-            
-            .btn {
-                padding: 7px 12px;
-                font-size: 0.8rem;
-                margin: 2px;
-            }
-            
-            .status {
-                font-size: 0.85rem;
-                min-width: 100px;
-            }
-        }
-        
-        @media (max-width: 360px) {
-            body {
+                font-size: 0.95rem;
                 padding: 12px;
             }
             
-            .container {
-                padding: 16px;
-            }
-            
-            .photo-frame {
-                width: 130px;
-                height: 170px;
-            }
-            
-            h1 {
-                font-size: 1.7rem;
-            }
-            
-            .gifts-table th,
-            .gifts-table td {
-                font-size: 0.75rem;
-                padding: 8px 4px;
-            }
-            
             .btn {
-                padding: 6px 10px;
+                padding: 6px 9px;
                 font-size: 0.75rem;
-                gap: 3px;
+                gap: 4px;
             }
             
-            .status {
-                font-size: 0.8rem;
-                padding: 6px 10px;
+            .gift-card h3 {
+                font-size: 1rem;
             }
             
-            .category {
-                font-size: 0.75rem;
-                padding: 4px 8px;
+            .gift-card .btn-group {
+                gap: 6px;
             }
         }
     </style>
@@ -656,20 +639,21 @@
         
         <section>
             <h2><i class="fas fa-gifts"></i> Список подарков</h2>
-            <table class="gifts-table">
-                <thead>
-                    <tr>
-                        <th width="5%">№</th>
-                        <th width="22%">Название</th>
-                        <th width="13%">Категория</th>
-                        <th width="45%">Ссылка на подарок</th>
-                        <th width="15%">Статус</th>
-                    </tr>
-                </thead>
-                <tbody id="gifts-list">
-                    <!-- Заполняется JS -->
-                </tbody>
-            </table>
+            <div class="gifts-table-wrapper">
+                <table class="gifts-table">
+                    <thead>
+                        <tr>
+                            <th>№</th>
+                            <th>Название</th>
+                            <th>Категория</th>
+                            <th>Ссылка на подарок</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gifts-table-body"></tbody>
+                </table>
+            </div>
+            <div class="gifts-cards" id="gifts-cards-container"></div>
         </section>
         
         <footer>
@@ -692,7 +676,8 @@
         ];
 
         let giftToUnbook = null;
-        const giftsList = document.getElementById('gifts-list');
+        const tableBody = document.getElementById('gifts-table-body');
+        const cardsContainer = document.getElementById('gifts-cards-container');
         const unbookModal = document.getElementById('unbook-modal');
         const cancelUnbookBtn = document.getElementById('cancel-unbook');
         const confirmUnbookBtn = document.getElementById('confirm-unbook');
@@ -704,60 +689,81 @@
             if (photoPlaceholder) photoPlaceholder.style.display = 'block';
         }
 
-        function renderGifts() {
-            giftsList.innerHTML = '';
+        function getStatusBadge(status) {
+            const labels = {
+                free: { text: 'Свободно', class: 'status-free' },
+                reserved: { text: 'Бронируется', class: 'status-reserved' },
+                booked: { text: 'Забронировано', class: 'status-booked' }
+            };
+            const { text, class: cls } = labels[status] || labels.free;
+            return `<span class="status ${cls}">${text}</span>`;
+        }
+
+        function getActionButtons(gift) {
+            if (gift.status === 'free') {
+                return `
+                    <button class="btn btn-preview" onclick="window.open('${gift.link}', '_blank')">
+                        <i class="fas fa-external-link-alt"></i> Посмотреть на WB
+                    </button>
+                    <button class="btn btn-reserve" onclick="reserveGift(${gift.id})">
+                        <i class="fas fa-gift"></i> Забронировать
+                    </button>`;
+            } else if (gift.status === 'reserved') {
+                return `
+                    <button class="btn btn-preview" onclick="window.open('${gift.link}', '_blank')">
+                        <i class="fas fa-external-link-alt"></i> Посмотреть на WB
+                    </button>
+                    <div class="confirm-panel" id="confirm-${gift.id}" style="display:none;">
+                        <div class="confirm-text">Подтвердить бронирование?</div>
+                        <button class="btn btn-confirm" onclick="confirmReservation(${gift.id})">
+                            <i class="fas fa-check"></i> Да, подтвердить
+                        </button>
+                        <button class="btn btn-cancel" onclick="cancelReservation(${gift.id})">
+                            <i class="fas fa-times"></i> Отменить
+                        </button>
+                    </div>`;
+            } else {
+                return `
+                    <button class="btn btn-preview" onclick="window.open('${gift.link}', '_blank')">
+                        <i class="fas fa-external-link-alt"></i> Посмотреть на WB
+                    </button>
+                    <button class="btn btn-unbook" onclick="openUnbookModal(${gift.id})">
+                        <i class="fas fa-undo"></i> Отменить бронь
+                    </button>`;
+            }
+        }
+
+        function renderTable() {
+            tableBody.innerHTML = '';
             gifts.forEach(gift => {
+                const commentHtml = gift.comment ? `<div class="comment">${gift.comment}</div>` : '';
                 const row = document.createElement('tr');
                 if (gift.status === 'booked') row.classList.add('booked-row');
-
-                let statusText, statusClass, actionButtons;
-                if (gift.status === 'free') {
-                    statusText = 'Свободно';
-                    statusClass = 'status-free';
-                    actionButtons = `
-                        <button class="btn btn-preview" onclick="window.open('${gift.link}', '_blank')">
-                            <i class="fas fa-external-link-alt"></i> Посмотреть на WB
-                        </button>
-                        <button class="btn btn-reserve" onclick="reserveGift(${gift.id})">
-                            <i class="fas fa-gift"></i> Забронировать
-                        </button>`;
-                } else if (gift.status === 'reserved') {
-                    statusText = 'Бронируется';
-                    statusClass = 'status-reserved';
-                    actionButtons = `
-                        <button class="btn btn-preview" onclick="window.open('${gift.link}', '_blank')">
-                            <i class="fas fa-external-link-alt"></i> Посмотреть на WB
-                        </button>
-                        <div class="confirm-panel" id="confirm-${gift.id}" style="display:none;">
-                            <div class="confirm-text">Подтвердить бронирование?</div>
-                            <button class="btn btn-confirm" onclick="confirmReservation(${gift.id})">
-                                <i class="fas fa-check"></i> Да, подтвердить
-                            </button>
-                            <button class="btn btn-cancel" onclick="cancelReservation(${gift.id})">
-                                <i class="fas fa-times"></i> Отменить
-                            </button>
-                        </div>`;
-                } else {
-                    statusText = 'Забронировано';
-                    statusClass = 'status-booked';
-                    actionButtons = `
-                        <button class="btn btn-preview" onclick="window.open('${gift.link}', '_blank')">
-                            <i class="fas fa-external-link-alt"></i> Посмотреть на WB
-                        </button>
-                        <button class="btn btn-unbook" onclick="openUnbookModal(${gift.id})">
-                            <i class="fas fa-undo"></i> Отменить бронь
-                        </button>`;
-                }
-
-                const commentHtml = gift.comment ? `<div class="comment">${gift.comment}</div>` : '';
                 row.innerHTML = `
                     <td>${gift.id}</td>
                     <td><strong>${gift.name}</strong>${commentHtml}</td>
                     <td><span class="category">${gift.category}</span></td>
-                    <td>${actionButtons}</td>
-                    <td><span class="status ${statusClass}">${statusText}</span></td>
+                    <td>${getActionButtons(gift)}</td>
+                    <td>${getStatusBadge(gift.status)}</td>
                 `;
-                giftsList.appendChild(row);
+                tableBody.appendChild(row);
+            });
+        }
+
+        function renderCards() {
+            cardsContainer.innerHTML = '';
+            gifts.forEach(gift => {
+                const commentHtml = gift.comment ? `<div class="comment">${gift.comment}</div>` : '';
+                const card = document.createElement('div');
+                card.className = `gift-card ${gift.status === 'booked' ? 'booked' : ''}`;
+                card.innerHTML = `
+                    <h3>${gift.name}</h3>
+                    ${commentHtml}
+                    <div class="category">${gift.category}</div>
+                    ${getStatusBadge(gift.status)}
+                    <div class="btn-group">${getActionButtons(gift).replace(/confirm-panel/g, 'confirm-panel card')}</div>
+                `;
+                cardsContainer.appendChild(card);
             });
         }
 
@@ -766,9 +772,9 @@
             if (gift && gift.status === 'free') {
                 gift.status = 'reserved';
                 gift.bookedBy = "Вы";
-                renderGifts();
+                render();
                 setTimeout(() => {
-                    const panel = document.getElementById(`confirm-${id}`);
+                    const panel = document.querySelector(`#confirm-${id}`);
                     if (panel) panel.style.display = 'block';
                 }, 100);
                 showNotification('Подарок зарезервирован! Подтвердите бронирование.', 'info');
@@ -779,7 +785,7 @@
             const gift = gifts.find(g => g.id === id);
             if (gift && gift.status === 'reserved') {
                 gift.status = 'booked';
-                renderGifts();
+                render();
                 saveToLocalStorage();
                 showNotification('Подарок успешно забронирован! Спасибо!', 'success');
             }
@@ -790,7 +796,7 @@
             if (gift && gift.status === 'reserved') {
                 gift.status = 'free';
                 gift.bookedBy = '';
-                renderGifts();
+                render();
                 saveToLocalStorage();
                 showNotification('Бронирование отменено', 'info');
             }
@@ -807,7 +813,7 @@
                 if (gift && gift.status === 'booked') {
                     gift.status = 'free';
                     gift.bookedBy = '';
-                    renderGifts();
+                    render();
                     saveToLocalStorage();
                     showNotification('Бронирование отменено! Подарок снова доступен.', 'success');
                 }
@@ -862,9 +868,14 @@
             }
         }
 
+        function render() {
+            renderTable();
+            renderCards();
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             loadFromLocalStorage();
-            renderGifts();
+            render();
 
             nastyaPhoto.onerror = showPlaceholder;
             setTimeout(() => {
