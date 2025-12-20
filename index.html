@@ -661,237 +661,245 @@
         </footer>
     </div>
     
-    <script>
-        const gifts = [
-            { id: 1, name: "Пижама для девочки со штанами", category: "Одежда", link: "https://www.wildberries.by/catalog/446793216/detail.aspx?size=631539819", comment: "Рост 135-145", status: "free", bookedBy: "" },
-            { id: 2, name: "Кигуруми Пикачу- Пижама Для Дома", category: "Одежда", link: "https://www.wildberries.by/catalog/177554973/detail.aspx?size=293993230", comment: "Рост 140", status: "free", bookedBy: "" },
-            { id: 3, name: "Тапочки домашние кигуруми Пикачу", category: "Одежда", link: "https://www.wildberries.by/catalog/134246810/detail.aspx?size=230177738", comment: "35-38", status: "free", bookedBy: "" },
-            { id: 4, name: "Настольная игра Словодел Великан", category: "Игры", link: "https://www.wildberries.by/catalog/374826/detail.aspx?size=1679515", comment: "", status: "free", bookedBy: "" },
-            { id: 5, name: "Настольная игра Властелин слов", category: "Игры", link: "https://www.wildberries.by/catalog/288097336/detail.aspx?size=440248049", comment: "", status: "free", bookedBy: "" },
-            { id: 6, name: "Набор для опытов и творчества Зелье", category: "Творчество", link: "https://www.wildberries.by/catalog/436264576/detail.aspx?size=618930955", comment: "", status: "free", bookedBy: "" },
-            { id: 7, name: "Портативный мини принтер для наклеек и фото", category: "Электроника", link: "https://www.wildberries.by/catalog/202653223/detail.aspx?size=326729613", comment: "", status: "free", bookedBy: "" },
-            { id: 8, name: "Конструктор ручек для детей", category: "Творчество", link: "https://www.wildberries.by/catalog/486210468/detail.aspx?size=678077181", comment: "", status: "free", bookedBy: "" },
-            { id: 9, name: "Книга интервью анкета для девочек и мальчиков", category: "Творчество", link: "https://www.wildberries.by/catalog/15473870/detail.aspx?size=44937170", comment: "", status: "free", bookedBy: "" },
-            { id: 10, name: "Настольная игра Что за трек: Вечные Хиты", category: "Игры", link: "https://www.wildberries.by/catalog/344230530/detail.aspx?size=511584735", comment: "", status: "free", bookedBy: "" }
-        ];
+   <script>
+    const gifts = [
+        { id: 1, name: "Пижама для девочки со штанами", category: "Одежда", link: "https://www.wildberries.by/catalog/446793216/detail.aspx?size=631539819", comment: "Рост 135-145", status: "free", bookedBy: "" },
+        { id: 2, name: "Кигуруми Пикачу- Пижама Для Дома", category: "Одежда", link: "https://www.wildberries.by/catalog/177554973/detail.aspx?size=293993230", comment: "Рост 140", status: "free", bookedBy: "" },
+        { id: 3, name: "Тапочки домашние кигуруми Пикачу", category: "Одежда", link: "https://www.wildberries.by/catalog/134246810/detail.aspx?size=230177738", comment: "35-38", status: "free", bookedBy: "" },
+        { id: 4, name: "Настольная игра Словодел Великан", category: "Игры", link: "https://www.wildberries.by/catalog/374826/detail.aspx?size=1679515", comment: "", status: "free", bookedBy: "" },
+        { id: 5, name: "Настольная игра Властелин слов", category: "Игры", link: "https://www.wildberries.by/catalog/288097336/detail.aspx?size=440248049", comment: "", status: "free", bookedBy: "" },
+        { id: 6, name: "Набор для опытов и творчества Зелье", category: "Творчество", link: "https://www.wildberries.by/catalog/436264576/detail.aspx?size=618930955", comment: "", status: "free", bookedBy: "" },
+        { id: 7, name: "Портативный мини принтер для наклеек и фото", category: "Электроника", link: "https://www.wildberries.by/catalog/202653223/detail.aspx?size=326729613", comment: "", status: "free", bookedBy: "" },
+        { id: 8, name: "Конструктор ручек для детей", category: "Творчество", link: "https://www.wildberries.by/catalog/486210468/detail.aspx?size=678077181", comment: "", status: "free", bookedBy: "" },
+        { id: 9, name: "Книга интервью анкета для девочек и мальчиков", category: "Творчество", link: "https://www.wildberries.by/catalog/15473870/detail.aspx?size=44937170", comment: "", status: "free", bookedBy: "" },
+        { id: 10, name: "Настольная игра Что за трек: Вечные Хиты", category: "Игры", link: "https://www.wildberries.by/catalog/344230530/detail.aspx?size=511584735", comment: "", status: "free", bookedBy: "" }
+    ];
 
-        let giftToUnbook = null;
-        const tableBody = document.getElementById('gifts-table-body');
-        const cardsContainer = document.getElementById('gifts-cards-container');
-        const unbookModal = document.getElementById('unbook-modal');
-        const cancelUnbookBtn = document.getElementById('cancel-unbook');
-        const confirmUnbookBtn = document.getElementById('confirm-unbook');
-        const photoPlaceholder = document.getElementById('photo-placeholder');
-        const nastyaPhoto = document.getElementById('nastya-photo');
+    let giftToUnbook = null;
+    const tableBody = document.getElementById('gifts-table-body');
+    const cardsContainer = document.getElementById('gifts-cards-container');
+    const unbookModal = document.getElementById('unbook-modal');
+    const cancelUnbookBtn = document.getElementById('cancel-unbook');
+    const confirmUnbookBtn = document.getElementById('confirm-unbook');
+    const photoPlaceholder = document.getElementById('photo-placeholder');
+    const nastyaPhoto = document.getElementById('nastya-photo');
 
-        function showPlaceholder() {
-            if (nastyaPhoto) nastyaPhoto.style.display = 'none';
-            if (photoPlaceholder) photoPlaceholder.style.display = 'block';
-        }
+    function showPlaceholder() {
+        if (nastyaPhoto) nastyaPhoto.style.display = 'none';
+        if (photoPlaceholder) photoPlaceholder.style.display = 'block';
+    }
 
-        function getStatusBadge(status) {
-            const labels = {
-                free: { text: 'Свободно', class: 'status-free' },
-                reserved: { text: 'Бронируется', class: 'status-reserved' },
-                booked: { text: 'Забронировано', class: 'status-booked' }
-            };
-            const { text, class: cls } = labels[status] || labels.free;
-            return `<span class="status ${cls}">${text}</span>`;
-        }
+    function getStatusBadge(status) {
+        const labels = {
+            free: { text: 'Свободно', class: 'status-free' },
+            reserved: { text: 'Бронируется', class: 'status-reserved' },
+            booked: { text: 'Забронировано', class: 'status-booked' }
+        };
+        const { text, class: cls } = labels[status] || labels.free;
+        return `<span class="status ${cls}">${text}</span>`;
+    }
 
-        function getActionButtons(gift) {
-            if (gift.status === 'free') {
-                return `
-                    <button class="btn btn-preview" onclick="window.open('${gift.link}', '_blank')">
-                        <i class="fas fa-external-link-alt"></i> Посмотреть на WB
+    function getActionButtons(gift) {
+        if (gift.status === 'free') {
+            return `
+                <button class="btn btn-preview" onclick="window.open('${gift.link}', '_blank')">
+                    <i class="fas fa-external-link-alt"></i> Посмотреть на WB
+                </button>
+                <button class="btn btn-reserve" onclick="reserveGift(${gift.id})">
+                    <i class="fas fa-gift"></i> Забронировать
+                </button>`;
+        } else if (gift.status === 'reserved') {
+            return `
+                <button class="btn btn-preview" onclick="window.open('${gift.link}', '_blank')">
+                    <i class="fas fa-external-link-alt"></i> Посмотреть на WB
+                </button>
+                <div class="confirm-panel" id="confirm-${gift.id}" style="display:none;">
+                    <div class="confirm-text">Подтвердить бронирование?</div>
+                    <button class="btn btn-confirm" onclick="confirmReservation(${gift.id})">
+                        <i class="fas fa-check"></i> Да, подтвердить
                     </button>
-                    <button class="btn btn-reserve" onclick="reserveGift(${gift.id})">
-                        <i class="fas fa-gift"></i> Забронировать
-                    </button>`;
-            } else if (gift.status === 'reserved') {
-                return `
-                    <button class="btn btn-preview" onclick="window.open('${gift.link}', '_blank')">
-                        <i class="fas fa-external-link-alt"></i> Посмотреть на WB
+                    <button class="btn btn-cancel" onclick="cancelReservation(${gift.id})">
+                        <i class="fas fa-times"></i> Отменить
                     </button>
-                    <div class="confirm-panel" id="confirm-${gift.id}" style="display:none;">
-                        <div class="confirm-text">Подтвердить бронирование?</div>
-                        <button class="btn btn-confirm" onclick="confirmReservation(${gift.id})">
-                            <i class="fas fa-check"></i> Да, подтвердить
-                        </button>
-                        <button class="btn btn-cancel" onclick="cancelReservation(${gift.id})">
-                            <i class="fas fa-times"></i> Отменить
-                        </button>
-                    </div>`;
-            } else {
-                return `
-                    <button class="btn btn-preview" onclick="window.open('${gift.link}', '_blank')">
-                        <i class="fas fa-external-link-alt"></i> Посмотреть на WB
-                    </button>
-                    <button class="btn btn-unbook" onclick="openUnbookModal(${gift.id})">
-                        <i class="fas fa-undo"></i> Отменить бронь
-                    </button>`;
-            }
+                </div>`;
+        } else {
+            return `
+                <button class="btn btn-preview" onclick="window.open('${gift.link}', '_blank')">
+                    <i class="fas fa-external-link-alt"></i> Посмотреть на WB
+                </button>
+                <button class="btn btn-unbook" onclick="openUnbookModal(${gift.id})">
+                    <i class="fas fa-undo"></i> Отменить бронь
+                </button>`;
         }
+    }
 
-        function renderTable() {
-            tableBody.innerHTML = '';
-            gifts.forEach(gift => {
-                const commentHtml = gift.comment ? `<div class="comment">${gift.comment}</div>` : '';
-                const row = document.createElement('tr');
-                if (gift.status === 'booked') row.classList.add('booked-row');
-                row.innerHTML = `
-                    <td>${gift.id}</td>
-                    <td><strong>${gift.name}</strong>${commentHtml}</td>
-                    <td><span class="category">${gift.category}</span></td>
-                    <td>${getActionButtons(gift)}</td>
-                    <td>${getStatusBadge(gift.status)}</td>
-                `;
-                tableBody.appendChild(row);
-            });
+    function renderTable() {
+        tableBody.innerHTML = '';
+        gifts.forEach(gift => {
+            const commentHtml = gift.comment ? `<div class="comment">${gift.comment}</div>` : '';
+            const row = document.createElement('tr');
+            if (gift.status === 'booked') row.classList.add('booked-row');
+            row.innerHTML = `
+                <td>${gift.id}</td>
+                <td><strong>${gift.name}</strong>${commentHtml}</td>
+                <td><span class="category">${gift.category}</span></td>
+                <td>${getActionButtons(gift)}</td>
+                <td>${getStatusBadge(gift.status)}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    function renderCards() {
+        cardsContainer.innerHTML = '';
+        gifts.forEach(gift => {
+            const commentHtml = gift.comment ? `<div class="comment">${gift.comment}</div>` : '';
+            const card = document.createElement('div');
+            card.className = `gift-card ${gift.status === 'booked' ? 'booked' : ''}`;
+            card.innerHTML = `
+                <h3>${gift.name}</h3>
+                ${commentHtml}
+                <div class="category">${gift.category}</div>
+                ${getStatusBadge(gift.status)}
+                <div class="btn-group">${getActionButtons(gift)}</div>
+            `;
+            cardsContainer.appendChild(card);
+        });
+    }
+
+    function reserveGift(id) {
+        const gift = gifts.find(g => g.id === id);
+        if (gift && gift.status === 'free') {
+            gift.status = 'reserved';
+            gift.bookedBy = "Вы";
+            render(); // Перерисовываем всё
+
+            // Ждём, пока DOM обновится
+            setTimeout(() => {
+                const panel = document.getElementById(`confirm-${id}`);
+                if (panel) {
+                    panel.style.display = 'block';
+                    // Прокручиваем к панели на мобильных
+                    if (window.innerWidth <= 768) {
+                        panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                }
+            }, 50);
+            showNotification('Подарок зарезервирован! Подтвердите бронирование.', 'info');
         }
+    }
 
-        function renderCards() {
-            cardsContainer.innerHTML = '';
-            gifts.forEach(gift => {
-                const commentHtml = gift.comment ? `<div class="comment">${gift.comment}</div>` : '';
-                const card = document.createElement('div');
-                card.className = `gift-card ${gift.status === 'booked' ? 'booked' : ''}`;
-                card.innerHTML = `
-                    <h3>${gift.name}</h3>
-                    ${commentHtml}
-                    <div class="category">${gift.category}</div>
-                    ${getStatusBadge(gift.status)}
-                    <div class="btn-group">${getActionButtons(gift).replace(/confirm-panel/g, 'confirm-panel card')}</div>
-                `;
-                cardsContainer.appendChild(card);
-            });
+    function confirmReservation(id) {
+        const gift = gifts.find(g => g.id === id);
+        if (gift && gift.status === 'reserved') {
+            gift.status = 'booked';
+            render();
+            saveToLocalStorage();
+            showNotification('Подарок успешно забронирован! Спасибо!', 'success');
         }
+    }
 
-        function reserveGift(id) {
-            const gift = gifts.find(g => g.id === id);
-            if (gift && gift.status === 'free') {
-                gift.status = 'reserved';
-                gift.bookedBy = "Вы";
-                render();
-                setTimeout(() => {
-                    const panel = document.querySelector(`#confirm-${id}`);
-                    if (panel) panel.style.display = 'block';
-                }, 100);
-                showNotification('Подарок зарезервирован! Подтвердите бронирование.', 'info');
-            }
+    function cancelReservation(id) {
+        const gift = gifts.find(g => g.id === id);
+        if (gift && gift.status === 'reserved') {
+            gift.status = 'free';
+            gift.bookedBy = '';
+            render();
+            saveToLocalStorage();
+            showNotification('Бронирование отменено', 'info');
         }
+    }
 
-        function confirmReservation(id) {
-            const gift = gifts.find(g => g.id === id);
-            if (gift && gift.status === 'reserved') {
-                gift.status = 'booked';
-                render();
-                saveToLocalStorage();
-                showNotification('Подарок успешно забронирован! Спасибо!', 'success');
-            }
-        }
+    function openUnbookModal(id) {
+        giftToUnbook = id;
+        unbookModal.style.display = 'flex';
+    }
 
-        function cancelReservation(id) {
-            const gift = gifts.find(g => g.id === id);
-            if (gift && gift.status === 'reserved') {
+    confirmUnbookBtn.addEventListener('click', () => {
+        if (giftToUnbook) {
+            const gift = gifts.find(g => g.id === giftToUnbook);
+            if (gift && gift.status === 'booked') {
                 gift.status = 'free';
                 gift.bookedBy = '';
                 render();
                 saveToLocalStorage();
-                showNotification('Бронирование отменено', 'info');
+                showNotification('Бронирование отменено! Подарок снова доступен.', 'success');
+            }
+            unbookModal.style.display = 'none';
+            giftToUnbook = null;
+        }
+    });
+
+    cancelUnbookBtn.addEventListener('click', () => {
+        unbookModal.style.display = 'none';
+        giftToUnbook = null;
+    });
+
+    function showNotification(message, type) {
+        let notification = document.getElementById('custom-notification');
+        if (!notification) {
+            notification = document.createElement('div');
+            notification.id = 'custom-notification';
+            document.body.appendChild(notification);
+        }
+        const colors = {
+            success: { bg: 'linear-gradient(135deg, #a5d6a7, #81c784)', color: '#1b5e20', icon: 'check-circle' },
+            error: { bg: 'linear-gradient(135deg, #ef9a9a, #e57373)', color: '#b71c1c', icon: 'exclamation-circle' },
+            info: { bg: 'linear-gradient(135deg, #ffcc80, #ffb74d)', color: '#e65100', icon: 'info-circle' }
+        };
+        const cfg = colors[type] || colors.info;
+        notification.style.background = cfg.bg;
+        notification.style.color = cfg.color;
+        notification.innerHTML = `<i class="fas fa-${cfg.icon}"></i> <span>${message}</span>`;
+        notification.style.transform = 'translateX(0)';
+        setTimeout(() => notification.style.transform = 'translateX(150%)', 3000);
+    }
+
+    function saveToLocalStorage() {
+        localStorage.setItem('nastyaWishlist', JSON.stringify(gifts));
+    }
+
+    function loadFromLocalStorage() {
+        const saved = localStorage.getItem('nastyaWishlist');
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                gifts.forEach((gift, i) => {
+                    if (parsed[i]) {
+                        gift.status = parsed[i].status || 'free';
+                        gift.bookedBy = parsed[i].bookedBy || '';
+                    }
+                });
+            } catch (e) {
+                console.warn("Не удалось загрузить данные из localStorage");
             }
         }
+    }
 
-        function openUnbookModal(id) {
-            giftToUnbook = id;
-            unbookModal.style.display = 'flex';
-        }
+    function render() {
+        renderTable();
+        renderCards();
+    }
 
-        confirmUnbookBtn.addEventListener('click', () => {
-            if (giftToUnbook) {
-                const gift = gifts.find(g => g.id === giftToUnbook);
-                if (gift && gift.status === 'booked') {
-                    gift.status = 'free';
-                    gift.bookedBy = '';
-                    render();
-                    saveToLocalStorage();
-                    showNotification('Бронирование отменено! Подарок снова доступен.', 'success');
-                }
+    document.addEventListener('DOMContentLoaded', () => {
+        loadFromLocalStorage();
+        render();
+
+        nastyaPhoto.onerror = showPlaceholder;
+        setTimeout(() => {
+            if (nastyaPhoto.complete && nastyaPhoto.naturalHeight === 0) {
+                showPlaceholder();
+            }
+        }, 2000);
+
+        window.addEventListener('beforeunload', saveToLocalStorage);
+        window.addEventListener('click', (e) => {
+            if (e.target === unbookModal) {
                 unbookModal.style.display = 'none';
                 giftToUnbook = null;
             }
         });
-
-        cancelUnbookBtn.addEventListener('click', () => {
-            unbookModal.style.display = 'none';
-            giftToUnbook = null;
-        });
-
-        function showNotification(message, type) {
-            let notification = document.getElementById('custom-notification');
-            if (!notification) {
-                notification = document.createElement('div');
-                notification.id = 'custom-notification';
-                document.body.appendChild(notification);
-            }
-            const colors = {
-                success: { bg: 'linear-gradient(135deg, #a5d6a7, #81c784)', color: '#1b5e20', icon: 'check-circle' },
-                error: { bg: 'linear-gradient(135deg, #ef9a9a, #e57373)', color: '#b71c1c', icon: 'exclamation-circle' },
-                info: { bg: 'linear-gradient(135deg, #ffcc80, #ffb74d)', color: '#e65100', icon: 'info-circle' }
-            };
-            const cfg = colors[type] || colors.info;
-            notification.style.background = cfg.bg;
-            notification.style.color = cfg.color;
-            notification.innerHTML = `<i class="fas fa-${cfg.icon}"></i> <span>${message}</span>`;
-            notification.style.transform = 'translateX(0)';
-            setTimeout(() => notification.style.transform = 'translateX(150%)', 3000);
-        }
-
-        function saveToLocalStorage() {
-            localStorage.setItem('nastyaWishlist', JSON.stringify(gifts));
-        }
-
-        function loadFromLocalStorage() {
-            const saved = localStorage.getItem('nastyaWishlist');
-            if (saved) {
-                try {
-                    const parsed = JSON.parse(saved);
-                    gifts.forEach((gift, i) => {
-                        if (parsed[i]) {
-                            gift.status = parsed[i].status || 'free';
-                            gift.bookedBy = parsed[i].bookedBy || '';
-                        }
-                    });
-                } catch (e) {
-                    console.warn("Не удалось загрузить данные из localStorage");
-                }
-            }
-        }
-
-        function render() {
-            renderTable();
-            renderCards();
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            loadFromLocalStorage();
-            render();
-
-            nastyaPhoto.onerror = showPlaceholder;
-            setTimeout(() => {
-                if (nastyaPhoto.complete && nastyaPhoto.naturalHeight === 0) {
-                    showPlaceholder();
-                }
-            }, 2000);
-
-            window.addEventListener('beforeunload', saveToLocalStorage);
-            window.addEventListener('click', (e) => {
-                if (e.target === unbookModal) {
-                    unbookModal.style.display = 'none';
-                    giftToUnbook = null;
-                }
-            });
-        });
-    </script>
+    });
+</script>
 </body>
 </html>
