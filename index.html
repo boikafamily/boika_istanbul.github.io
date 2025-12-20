@@ -220,10 +220,6 @@
             border-bottom: none;
         }
         
-        .gifts-table tr:nth-child(even) {
-            background-color: rgba(255, 245, 250, 0.7);
-        }
-        
         .gifts-table tr.booked-row {
             text-decoration: line-through;
             opacity: 0.7;
@@ -759,17 +755,23 @@
             if (gift && gift.status === 'free') {
                 gift.status = 'reserved';
                 gift.bookedBy = "Вы";
-                render();
-                setTimeout(() => {
+                render(); // Полная перерисовка
+
+                // Надёжный показ панели с повторами
+                let attempts = 0;
+                const showPanel = () => {
                     const panel = document.getElementById(`confirm-${id}`);
                     if (panel) {
                         panel.style.display = 'block';
-                        // Прокрутка к панели на мобильных
                         if (window.innerWidth <= 768) {
                             panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         }
+                    } else if (attempts < 8) {
+                        attempts++;
+                        setTimeout(showPanel, 80);
                     }
-                }, 50);
+                };
+                setTimeout(showPanel, 120);
                 showNotification('Подарок зарезервирован! Подтвердите бронирование.', 'info');
             }
         }
@@ -837,7 +839,9 @@
             notification.style.color = cfg.color;
             notification.innerHTML = `<i class="fas fa-${cfg.icon}"></i> <span>${message}</span>`;
             notification.style.transform = 'translateX(0)';
-            setTimeout(() => notification.style.transform = 'translateX(150%)', 3000);
+            setTimeout(() => {
+                notification.style.transform = 'translateX(150%)';
+            }, 3000);
         }
 
         function saveToLocalStorage() {
