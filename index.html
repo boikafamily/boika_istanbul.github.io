@@ -102,13 +102,11 @@ th{background:#f8bbd0;color:#880e4f;text-align:left}
 <div id="notify"></div>
 
 <script>
-/* === SUPABASE === */
-const supabase = supabase.createClient(
+const supabaseClient = supabase.createClient(
   'https://yjithstkzcvcycmrfqet.supabase.co',
   'sb_publishable_-3Ipd2kAASwMYidT-kEoeg_6X07zYkl'
 );
 
-/* === ПОДАРКИ === */
 const gifts = [
  {id:1,name:"Пижама со штанами",cat:"Одежда",link:"https://www.wildberries.by/catalog/446793216/detail.aspx"},
  {id:2,name:"Кигуруми Пикачу",cat:"Одежда",link:"https://www.wildberries.by/catalog/177554973/detail.aspx"},
@@ -125,58 +123,61 @@ const gifts = [
 
 let states = {};
 
-/* === ЗАГРУЗКА === */
 async function load(){
-  const {data}=await supabase.from('gifts').select('*');
-  data.forEach(r=>states[r.id]=r.status);
+  const { data, error } = await supabaseClient
+    .from('gifts')
+    .select('*');
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  data.forEach(r => states[r.id] = r.status);
   render();
 }
 
-/* === ОБНОВЛЕНИЕ === */
-async function setStatus(id,status){
-  await supabase.from('gifts').update({status}).eq('id',id);
-  notify(status==='booked'?'Подарок забронирован!':'Бронь отменена');
+async function setStatus(id, status){
+  await supabaseClient
+    .from('gifts')
+    .update({ status })
+    .eq('id', id);
+
   load();
 }
 
-/* === РЕНДЕР === */
 function render(){
-  const tb=document.getElementById('tbody');
-  tb.innerHTML='';
-  gifts.forEach(g=>{
-    const st=states[g.id]||'free';
-    const tr=document.createElement('tr');
-    if(st==='booked')tr.classList.add('booked-row');
-    tr.innerHTML=`
+  const tb = document.getElementById('tbody');
+  tb.innerHTML = '';
+
+  gifts.forEach(g => {
+    const st = states[g.id] || 'free';
+    const tr = document.createElement('tr');
+    if (st === 'booked') tr.classList.add('booked-row');
+
+    tr.innerHTML = `
       <td>${g.id}</td>
       <td><strong>${g.name}</strong></td>
       <td><span class="category">${g.cat}</span></td>
       <td>
         <button class="btn btn-preview" onclick="window.open('${g.link}')">Посмотреть</button>
         ${
-          st==='free'
-          ? `<button class="btn btn-reserve" onclick="setStatus(${g.id},'booked')">Забронировать</button>`
-          : `<button class="btn btn-unbook" onclick="setStatus(${g.id},'free')">Отменить</button>`
+          st === 'free'
+            ? `<button class="btn btn-reserve" onclick="setStatus(${g.id}, 'booked')">Забронировать</button>`
+            : `<button class="btn btn-unbook" onclick="setStatus(${g.id}, 'free')">Отменить</button>`
         }
       </td>
       <td>
-        <span class="status ${st==='free'?'status-free':'status-booked'}">
-          ${st==='free'?'Свободно':'Забронировано'}
+        <span class="status ${st === 'free' ? 'status-free' : 'status-booked'}">
+          ${st === 'free' ? 'Свободно' : 'Забронировано'}
         </span>
-      </td>`;
+      </td>
+    `;
     tb.appendChild(tr);
   });
 }
 
-/* === УВЕДОМЛЕНИЕ === */
-function notify(text){
-  const n=document.getElementById('notify');
-  n.textContent=text;
-  n.style.transform='translateX(0)';
-  setTimeout(()=>n.style.transform='translateX(150%)',2500);
-}
-
-load();
+document.addEventListener('DOMContentLoaded', load);
 </script>
 </body>
 </html>
