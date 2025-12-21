@@ -192,7 +192,6 @@
             border-bottom: none;
         }
         
-        /* Забронировано в таблице */
         .gifts-table tr.booked-row {
             opacity: 0.75;
             color: #777777;
@@ -234,7 +233,6 @@
             color: #333333;
         }
         
-        /* Забронировано в карточках */
         .gift-card.booked {
             opacity: 0.75;
             color: #777777;
@@ -303,7 +301,6 @@
             margin-top: 10px;
         }
         
-        /* Общие стили для кнопок - одинаковые для всех версий */
         .btn {
             padding: 8px 12px;
             border: none;
@@ -318,35 +315,11 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         
-        .btn-preview { 
-            background: #e3f2fd; 
-            color: #0d47a1 !important;
-            border: 1px solid #bbdefb;
-        }
-        
-        .btn-reserve { 
-            background: #f8bbd0; 
-            color: #880e4f !important;
-            border: 1px solid #f48fb1;
-        }
-        
-        .btn-unbook { 
-            background: #ffecb3; 
-            color: #e65100 !important;
-            border: 1px solid #ffd54f;
-        }
-        
-        .btn-confirm { 
-            background: #c8e6c9; 
-            color: #1b5e20 !important;
-            border: 1px solid #a5d6a7;
-        }
-        
-        .btn-cancel { 
-            background: #eeeeee; 
-            color: #424242 !important;
-            border: 1px solid #e0e0e0;
-        }
+        .btn-preview { background: #e3f2fd; color: #0d47a1 !important; border: 1px solid #bbdefb; }
+        .btn-reserve { background: #f8bbd0; color: #880e4f !important; border: 1px solid #f48fb1; }
+        .btn-unbook { background: #ffecb3; color: #e65100 !important; border: 1px solid #ffd54f; }
+        .btn-confirm { background: #c8e6c9; color: #1b5e20 !important; border: 1px solid #a5d6a7; }
+        .btn-cancel { background: #eeeeee; color: #424242 !important; border: 1px solid #e0e0e0; }
         
         /* Модальные окна */
         .modal-overlay {
@@ -433,13 +406,8 @@
         }
         
         @media (max-width: 900px) {
-            .header-content {
-                justify-content: center;
-                text-align: center;
-            }
-            .header-text h1::after {
-                left: 50%; transform: translateX(-50%); width: 80%;
-            }
+            .header-content { justify-content: center; text-align: center; }
+            .header-text h1::after { left: 50%; transform: translateX(-50%); width: 80%; }
         }
         
         @media (max-width: 768px) {
@@ -450,10 +418,6 @@
             .photo-frame { width: 150px; height: 200px; }
             .btn { padding: 7px 10px; font-size: 0.85rem; }
             .birthday-icon { display: none; }
-            /* Обеспечиваем одинаковые цвета в мобильной версии */
-            .gift-card, .gift-card *:not(.btn-preview):not(.btn-reserve):not(.btn-unbook):not(.btn-confirm):not(.btn-cancel) {
-                color: #333333;
-            }
         }
         
         @media (max-width: 480px) {
@@ -466,13 +430,12 @@
     </style>
 </head>
 <body>
-    <!-- Декор -->
     <div class="birthday-icon icon-1">🎀</div>
     <div class="birthday-icon icon-2">🎈</div>
     <div class="birthday-icon icon-3">🎁</div>
     <div class="birthday-icon icon-4">🦄</div>
     
-    <!-- Модальное окно: подтверждение бронирования -->
+    <!-- Модальные окна -->
     <div class="modal-overlay" id="confirm-reserve-modal">
         <div class="modal">
             <h3>Подтвердить бронирование?</h3>
@@ -484,7 +447,6 @@
         </div>
     </div>
     
-    <!-- Модальное окно: отмена брони -->
     <div class="modal-overlay" id="unbook-modal">
         <div class="modal">
             <h3>Отменить бронирование?</h3>
@@ -521,7 +483,7 @@
         <section class="rules">
             <h2><i class="fas fa-info-circle"></i> Как это работает:</h2>
             <ol>
-                <li>Нажми «Посмотреть на WB», чтобы увидеть подарок на Wildberries.</li>
+                <li>Нажми «Посмотреть», чтобы увидеть подарок на Wildberries.</li>
                 <li>Если хочешь его подарить — нажми «Забронировать».</li>
                 <li>Подтверди бронирование в появившемся окне.</li>
                 <li>Если передумаешь — нажми «Отменить бронь».</li>
@@ -546,223 +508,18 @@
     </div>
     
     <script>
-        const gifts = [
-            { id: 1, name: "Пижама для девочки со штанами", category: "Одежда", link: "https://www.wildberries.by/catalog/446793216/detail.aspx?size=631539819", comment: "Рост 135-145", status: "free", bookedBy: "" },
-            { id: 2, name: "Кигуруми Пикачу- Пижама Для Дома", category: "Одежда", link: "https://www.wildberries.by/catalog/177554973/detail.aspx?size=293993230", comment: "Рост 140", status: "free", bookedBy: "" },
-            { id: 3, name: "Тапочки домашние кигуруми Пикачу", category: "Одежда", link: "https://www.wildberries.by/catalog/134246810/detail.aspx?size=230177738", comment: "35-38", status: "free", bookedBy: "" },
-            { id: 4, name: "Настольная игра Словодел Великан", category: "Игры", link: "https://www.wildberries.by/catalog/374826/detail.aspx?size=1679515", comment: "", status: "free", bookedBy: "" },
-            { id: 5, name: "Настольная игра Властелин слов", category: "Игры", link: "https://www.wildberries.by/catalog/288097336/detail.aspx?size=440248049", comment: "", status: "free", bookedBy: "" },
-            { id: 6, name: "Набор для опытов и творчества Зелье", category: "Творчество", link: "https://www.wildberries.by/catalog/436264576/detail.aspx?size=618930955", comment: "", status: "free", bookedBy: "" },
-            { id: 7, name: "Портативный мини принтер для наклеек и фото", category: "Электроника", link: "https://www.wildberries.by/catalog/202653223/detail.aspx?size=326729613", comment: "", status: "free", bookedBy: "" },
-            { id: 8, name: "Конструктор ручек для детей", category: "Творчество", link: "https://www.wildberries.by/catalog/486210468/detail.aspx?size=678077181", comment: "", status: "free", bookedBy: "" },
-            { id: 9, name: "Книга интервью анкета для девочек и мальчиков", category: "Творчество", link: "https://www.wildberries.by/catalog/15473870/detail.aspx?size=44937170", comment: "", status: "free", bookedBy: "" },
-            { id: 10, name: "Настольная игра Что за трек: Вечные Хиты", category: "Игры", link: "https://www.wildberries.by/catalog/344230530/detail.aspx?size=511584735", comment: "", status: "free", bookedBy: "" },
-            { id: 11, name: "Подарок девочке создай часы", category: "Электроника", link: "https://www.wildberries.by/catalog/234551397/detail.aspx?targetUrl=EX", comment: "", status: "free", bookedBy: "" }
-        ];
+        // === ТВОЯ ССЫЛКА НА GOOGLE APPS SCRIPT ===
+        const BACKEND_URL = "https://script.google.com/macros/s/AKfycbyhuSucu26XQ1LSXbOChGYeNKF3tMl8XaEBMZcmbiFFO0msBl9nb2ZmuWEy-o9juK8C7Q/exec";
 
-        let giftToReserve = null;
-        let giftToUnbook = null;
-        const tableBody = document.getElementById('gifts-table-body');
-        const cardsContainer = document.getElementById('gifts-cards-container');
-        const confirmReserveModal = document.getElementById('confirm-reserve-modal');
-        const cancelReserveBtn = document.getElementById('cancel-reserve');
-        const confirmReserveBtn = document.getElementById('confirm-reserve');
-        const unbookModal = document.getElementById('unbook-modal');
-        const cancelUnbookBtn = document.getElementById('cancel-unbook');
-        const confirmUnbookBtn = document.getElementById('confirm-unbook');
-        const photoPlaceholder = document.getElementById('photo-placeholder');
-        const nastyaPhoto = document.getElementById('nastya-photo');
-
-        function showPlaceholder() {
-            if (nastyaPhoto) nastyaPhoto.style.display = 'none';
-            if (photoPlaceholder) photoPlaceholder.style.display = 'block';
-        }
-
-        function getStatusBadge(status) {
-            if (status === 'booked') {
-                return '<span class="status status-booked">Забронировано</span>';
-            }
-            return '<span class="status status-free">Свободно</span>';
-        }
-
-        function getActionButtons(gift) {
-            if (gift.status === 'free') {
-                return `
-                    <button class="btn btn-preview" onclick="window.open('${gift.link.trim()}', '_blank')">
-                        <i class="fas fa-external-link-alt"></i> Посмотреть
-                    </button>
-                    <button class="btn btn-reserve" onclick="openReserveModal(${gift.id})">
-                        <i class="fas fa-gift"></i> Забронировать
-                    </button>`;
-            } else {
-                return `
-                    <button class="btn btn-preview" onclick="window.open('${gift.link.trim()}', '_blank')">
-                        <i class="fas fa-external-link-alt"></i> Посмотреть
-                    </button>
-                    <button class="btn btn-unbook" onclick="openUnbookModal(${gift.id})">
-                        <i class="fas fa-undo"></i> Отменить бронь
-                    </button>`;
-            }
-        }
-
-        function renderTable() {
-            tableBody.innerHTML = '';
-            gifts.forEach(gift => {
-                const commentHtml = gift.comment ? `<div class="comment">${gift.comment}</div>` : '';
-                const row = document.createElement('tr');
-                if (gift.status === 'booked') row.classList.add('booked-row');
-                row.innerHTML = `
-                    <td>${gift.id}</td>
-                    <td><strong>${gift.name}</strong>${commentHtml}</td>
-                    <td><span class="category">${gift.category}</span></td>
-                    <td>${getActionButtons(gift)}</td>
-                    <td>${getStatusBadge(gift.status)}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-        }
-
-        function renderCards() {
-            cardsContainer.innerHTML = '';
-            gifts.forEach(gift => {
-                const commentHtml = gift.comment ? `<div class="comment">${gift.comment}</div>` : '';
-                const card = document.createElement('div');
-                card.className = `gift-card ${gift.status === 'booked' ? 'booked' : ''}`;
-                card.innerHTML = `
-                    <h3>${gift.name}</h3>
-                    ${commentHtml}
-                    <div class="category">${gift.category}</div>
-                    ${getStatusBadge(gift.status)}
-                    <div class="btn-group">${getActionButtons(gift)}</div>
-                `;
-                cardsContainer.appendChild(card);
-            });
-        }
-
-        function render() {
-            renderTable();
-            renderCards();
-        }
-
-        function openReserveModal(id) {
-            const gift = gifts.find(g => g.id === id);
-            if (gift && gift.status === 'free') {
-                giftToReserve = id;
-                document.getElementById('confirm-reserve-text').textContent = `Вы действительно хотите забронировать «${gift.name}»?`;
-                confirmReserveModal.style.display = 'flex';
-            }
-        }
-
-        confirmReserveBtn.addEventListener('click', () => {
-            if (giftToReserve !== null) {
-                const gift = gifts.find(g => g.id === giftToReserve);
-                if (gift && gift.status === 'free') {
-                    gift.status = 'booked';
-                    gift.bookedBy = "Вы";
-                    render();
-                    saveToLocalStorage();
-                    showNotification('Подарок успешно забронирован! Спасибо!', 'success');
-                }
-                confirmReserveModal.style.display = 'none';
-                giftToReserve = null;
-            }
-        });
-
-        cancelReserveBtn.addEventListener('click', () => {
-            confirmReserveModal.style.display = 'none';
-            giftToReserve = null;
-        });
-
-        function openUnbookModal(id) {
-            giftToUnbook = id;
-            unbookModal.style.display = 'flex';
-        }
-
-        confirmUnbookBtn.addEventListener('click', () => {
-            if (giftToUnbook !== null) {
-                const gift = gifts.find(g => g.id === giftToUnbook);
-                if (gift && gift.status === 'booked') {
-                    gift.status = 'free';
-                    gift.bookedBy = '';
-                    render();
-                    saveToLocalStorage();
-                    showNotification('Бронирование отменено! Подарок снова доступен.', 'success');
-                }
-                unbookModal.style.display = 'none';
-                giftToUnbook = null;
-            }
-        });
-
-        cancelUnbookBtn.addEventListener('click', () => {
-            unbookModal.style.display = 'none';
-            giftToUnbook = null;
-        });
-
-        function showNotification(message, type) {
-            let notification = document.getElementById('custom-notification');
-            if (!notification) {
-                notification = document.createElement('div');
-                notification.id = 'custom-notification';
-                document.body.appendChild(notification);
-            }
-            const colors = {
-                success: { bg: '#c8e6c9', color: '#1b5e20', icon: 'check-circle' },
-                error: { bg: '#ffcdd2', color: '#b71c1c', icon: 'exclamation-circle' },
-                info: { bg: '#fff3e0', color: '#e65100', icon: 'info-circle' }
-            };
-            const cfg = colors[type] || colors.info;
-            notification.style.background = cfg.bg;
-            notification.style.color = cfg.color;
-            notification.innerHTML = `<i class="fas fa-${cfg.icon}"></i> <span>${message}</span>`;
-            notification.style.transform = 'translateX(0)';
-            setTimeout(() => {
-                notification.style.transform = 'translateX(150%)';
-            }, 3000);
-        }
-
-        function saveToLocalStorage() {
-            localStorage.setItem('nastyaWishlist', JSON.stringify(gifts));
-        }
-
-        function loadFromLocalStorage() {
-            const saved = localStorage.getItem('nastyaWishlist');
-            if (saved) {
-                try {
-                    const parsed = JSON.parse(saved);
-                    gifts.forEach((gift, i) => {
-                        if (parsed[i]) {
-                            gift.status = parsed[i].status || 'free';
-                            gift.bookedBy = parsed[i].bookedBy || '';
-                        }
-                    });
-                } catch (e) {
-                    console.warn("Ошибка загрузки данных");
-                }
-            }
-        }
-
-        window.addEventListener('click', (e) => {
-            if (e.target === confirmReserveModal) {
-                confirmReserveModal.style.display = 'none';
-                giftToReserve = null;
-            }
-            if (e.target === unbookModal) {
-                unbookModal.style.display = 'none';
-                giftToUnbook = null;
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            loadFromLocalStorage();
-            render();
-            nastyaPhoto.onerror = showPlaceholder;
-            setTimeout(() => {
-                if (nastyaPhoto.complete && nastyaPhoto.naturalHeight === 0) {
-                    showPlaceholder();
-                }
-            }, 2000);
-            window.addEventListener('beforeunload', saveToLocalStorage);
-        });
-    </script>
-</body>
-</html>
+        // Исходный список (для отображения, если сервер недоступен)
+        const initialGifts = [
+            { id: 1, name: "Пижама для девочки со штанами", category: "Одежда", link: "https://www.wildberries.by/catalog/446793216/detail.aspx?size=631539819", comment: "Рост 135-145" },
+            { id: 2, name: "Кигуруми Пикачу- Пижама Для Дома", category: "Одежда", link: "https://www.wildberries.by/catalog/177554973/detail.aspx?size=293993230", comment: "Рост 140" },
+            { id: 3, name: "Тапочки домашние кигуруми Пикачу", category: "Одежда", link: "https://www.wildberries.by/catalog/134246810/detail.aspx?size=230177738", comment: "35-38" },
+            { id: 4, name: "Настольная игра Словодел Великан", category: "Игры", link: "https://www.wildberries.by/catalog/374826/detail.aspx?size=1679515", comment: "" },
+            { id: 5, name: "Настольная игра Властелин слов", category: "Игры", link: "https://www.wildberries.by/catalog/288097336/detail.aspx?size=440248049", comment: "" },
+            { id: 6, name: "Набор для опытов и творчества Зелье", category: "Творчество", link: "https://www.wildberries.by/catalog/436264576/detail.aspx?size=618930955", comment: "" },
+            { id: 7, name: "Портативный мини принтер для наклеек и фото", category: "Электроника", link: "https://www.wildberries.by/catalog/202653223/detail.aspx?size=326729613", comment: "" },
+            { id: 8, name: "Конструктор ручек для детей", category: "Творчество", link: "https://www.wildberries.by/catalog/486210468/detail.aspx?size=678077181", comment: "" },
+            { id: 9, name: "Книга интервью анкета для девочек и мальчиков", category: "Творчество", link: "https://www.wildberries.by/catalog/15473870/detail.aspx?size=44937170", comment: "" },
+            { id: 10, name: "Настольная игра Что за трек: Вечные Хиты", category: "Игры", link: "https://www.wildberries.by/catalog/344230530/detail.aspx?size=511584735", comment: ""
