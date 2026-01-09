@@ -318,9 +318,10 @@
         
         .btn-preview { background: #e3f2fd; color: #0d47a1 !important; border: 1px solid #bbdefb; }
         .btn-reserve { background: #f8bbd0; color: #880e4f !important; border: 1px solid #f48fb1; }
-        .btn-unbook { background: #ffecb3; color: #e65100 !important; border: 1px solid #ffd54f; }
+        .btn-unbook { background: linear-gradient(135deg, #ffecb3, #ffd54f); color: #e65100 !important; border: 1px solid #ffd54f; }
         .btn-confirm { background: #c8e6c9; color: #1b5e20 !important; border: 1px solid #a5d6a7; }
         .btn-cancel { background: #eeeeee; color: #424242 !important; border: 1px solid #e0e0e0; }
+        .btn-disabled { background: #f5f5f5; color: #999 !important; border: 1px solid #ddd; cursor: not-allowed; opacity: 0.6; }
         
         /* Модальные окна */
         .modal-overlay {
@@ -515,7 +516,7 @@
     <div class="modal-overlay" id="unbook-modal">
         <div class="modal">
             <h3>Отменить бронирование?</h3>
-            <p>Вы уверены, что хотите отменить бронирование этого подарка? После отмены он снова станет доступен для других гостей.</p>
+            <p id="unbook-text">Вы уверены, что хотите отменить бронирование этого подарка? После отмены он снова станет доступен для других гостей.</p>
             <div class="modal-buttons">
                 <button class="btn btn-cancel" id="cancel-unbook">Нет, оставить</button>
                 <button class="btn btn-unbook" id="confirm-unbook">Да, отменить</button>
@@ -551,7 +552,7 @@
                 <li>Нажми «Посмотреть», чтобы увидеть подарок на Wildberries.</li>
                 <li>Если хочешь его подарить — нажми «Забронировать».</li>
                 <li>Подтверди бронирование в появившемся окне.</li>
-                <li>Если передумаешь — нажми «Отменить бронь».</li>
+                <li>Если передумаешь — нажми «Отменить бронь» (только свои брони).</li>
                 <li>Этот список — только идеи. Главное — ты сам(а)! ❤️</li>
             </ol>
              <div class="intro-text">
@@ -598,7 +599,7 @@ const supabaseClient = supabase.createClient(
   'sb_publishable_-3Ipd2kAASwMYidT-kEoeg_6X07zYkl'
 );
 
-// Исходный список подарков (для отображения, если сервер недоступен)
+// Исходный список подарков
 const initialGifts = [
   { id: 1, name: "Пижама для девочки со штанами", category: "Одежда", link: "https://www.wildberries.by/catalog/446793216/detail.aspx?size=631539819", comment: "Рост 135-145" },
   { id: 2, name: "Кигуруми Пикачу- Пижама Для Дома", category: "Одежда", link: "https://www.wildberries.by/catalog/177554973/detail.aspx?size=293993230", comment: "Рост 140" },
@@ -609,16 +610,17 @@ const initialGifts = [
   { id: 7, name: "Портативный мини принтер для наклеек и фото", category: "Электроника", link: "https://www.wildberries.by/catalog/202653223/detail.aspx?size=326729613", comment: "" },
   { id: 8, name: "Книга интервью анкета для девочек и мальчиков", category: "Творчество", link: "https://www.wildberries.by/catalog/15473870/detail.aspx?size=44937170", comment: "" },
   { id: 9, name: "Подарок девочке создай часы", category: "Электроника", link: "https://www.wildberries.by/catalog/234551397/detail.aspx?targetUrl=EX", comment: "" },
-  // НОВЫЕ ПОДАРКИ - добавляем их прямо в исходный массив
   { id: 10, name: "Набор для создания сквишей лапка", category: "Творчество", link: "https://www.wildberries.by/catalog/314533756/detail.aspx", comment: "" },
   { id: 11, name: "Волшебная палочка Гермионы Грейнджер", category: "Игры", link: "https://www.wildberries.by/catalog/98330970/detail.aspx?targetUrl=MI", comment: "" },
   { id: 12, name: "Мантия Гарри Поттер Гриффиндор с галстуком и палочкой", category: "Одежда", link: "https://www.wildberries.by/catalog/300570771/detail.aspx?targetUrl=MI&size=815358965", comment: "Рост 135-145" }
 ];
 
-// Только ОДНО объявление переменной gifts
+// Глобальные переменные
 let gifts = [...initialGifts];
 let giftToReserve = null;
 let giftToUnbook = null;
+let userBookings = {}; // Хранит ID подарков, забронированных текущим пользователем
+let userId = null; // Уникальный ID пользователя
 
 // DOM
 const tableBody = document.getElementById('gifts-table-body');
@@ -626,210 +628,316 @@ const cardsContainer = document.getElementById('gifts-cards-container');
 const confirmReserveModal = document.getElementById('confirm-reserve-modal');
 const unbookModal = document.getElementById('unbook-modal');
 
-  // === ЗАГРУЗКА ДАННЫХ ИЗ SEATABLE ===
+/* ===== ГЕНЕРАЦИЯ УНИКАЛЬНОГО ID ПОЛЬЗОВАТЕЛЯ ===== */
+function generateUserId() {
+    // Проверяем, есть ли уже ID в localStorage
+    let id = localStorage.getItem('nastya_wishlist_user_id');
+    
+    if (!id) {
+        // Генерируем новый уникальный ID
+        id = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('nastya_wishlist_user_id', id);
+        
+        // Загружаем бронирования этого пользователя
+        const bookings = localStorage.getItem('nastya_wishlist_bookings_' + id);
+        if (bookings) {
+            userBookings = JSON.parse(bookings);
+        }
+    } else {
+        // Загружаем существующие бронирования
+        const bookings = localStorage.getItem('nastya_wishlist_bookings_' + id);
+        if (bookings) {
+            userBookings = JSON.parse(bookings);
+        }
+    }
+    
+    return id;
+}
+
+/* ===== СОХРАНЕНИЕ БРОНИРОВАНИЙ ПОЛЬЗОВАТЕЛЯ ===== */
+function saveUserBookings() {
+    if (userId) {
+        localStorage.setItem('nastya_wishlist_bookings_' + userId, JSON.stringify(userBookings));
+    }
+}
+
+/* ===== ЗАГРУЗКА ДАННЫХ ИЗ SUPABASE ===== */
 async function loadStatuses() {
-  const { data, error } = await supabaseClient
-    .from('gifts')
-    .select('id, status');
+    try {
+        const { data, error } = await supabaseClient
+            .from('gifts')
+            .select('id, status');
 
-  if (error) {
-    console.error('Supabase error:', error);
-    return;
-  }
+        if (error) {
+            console.error('Supabase error:', error);
+            showNotification('Ошибка загрузки данных', 'error');
+            return;
+        }
 
-  data.forEach(row => {
-    const gift = gifts.find(g => g.id === row.id);
-    if (gift) gift.status = row.status;
-  });
+        // Обновляем статусы подарков из базы данных
+        data.forEach(row => {
+            const gift = gifts.find(g => g.id === row.id);
+            if (gift) {
+                gift.status = row.status || 'free';
+            }
+        });
 
-  render();
+        render();
+    } catch (err) {
+        console.error('Error loading statuses:', err);
+        render(); // Рендерим с текущими данными
+    }
 }
 
 /* ===== ОБНОВЛЕНИЕ СТАТУСА ===== */
-async function updateStatus(id, status) {
-  const { error } = await supabaseClient
-    .from('gifts')
-    .update({ status })
-    .eq('id', id);
+async function updateStatus(id, status, isUserBooking = false) {
+    try {
+        // Обновляем в Supabase
+        const { error } = await supabaseClient
+            .from('gifts')
+            .update({ status })
+            .eq('id', id);
 
-  if (error) {
-    alert('Ошибка обновления. Попробуйте позже.');
-    return;
-  }
+        if (error) {
+            showNotification('Ошибка обновления. Попробуйте позже.', 'error');
+            return false;
+        }
 
-  const gift = gifts.find(g => g.id === id);
-  if (gift) gift.status = status;
+        // Обновляем локально
+        const gift = gifts.find(g => g.id === id);
+        if (gift) gift.status = status;
 
-  render();
+        // Если пользователь бронирует - сохраняем в его бронированиях
+        if (isUserBooking && status === 'booked') {
+            userBookings[id] = true;
+            saveUserBookings();
+        }
+        // Если пользователь отменяет - удаляем из его бронирований
+        else if (isUserBooking && status === 'free') {
+            delete userBookings[id];
+            saveUserBookings();
+        }
+
+        render();
+        return true;
+    } catch (err) {
+        console.error('Error updating status:', err);
+        showNotification('Ошибка соединения', 'error');
+        return false;
+    }
 }
 
-/* ===== ПЕРЕОПРЕДЕЛЯЕМ КНОПКИ ===== */
+/* ===== ОТОБРАЖЕНИЕ КНОПОК ===== */
+function getActionButtons(gift) {
+    const isBooked = gift.status === 'booked';
+    const isMyBooking = userBookings[gift.id];
+    
+    if (isBooked) {
+        // Если подарок забронирован, проверяем чья это бронь
+        if (isMyBooking) {
+            // Это бронь текущего пользователя - можно отменить
+            return `
+                <button class="btn btn-preview" onclick="window.open('${gift.link.trim()}', '_blank')">
+                    <i class="fas fa-external-link-alt"></i> Посмотреть
+                </button>
+                <button class="btn btn-unbook" onclick="openUnbookModal(${gift.id})">
+                    <i class="fas fa-undo"></i> Отменить бронь
+                </button>`;
+        } else {
+            // Это чужая бронь - нельзя отменить, только посмотреть
+            return `
+                <button class="btn btn-preview" onclick="window.open('${gift.link.trim()}', '_blank')">
+                    <i class="fas fa-external-link-alt"></i> Посмотреть
+                </button>
+                <button class="btn btn-disabled" disabled>
+                    <i class="fas fa-lock"></i> Уже забронировано
+                </button>`;
+        }
+    } else {
+        // Подарок свободен - можно забронировать
+        return `
+            <button class="btn btn-preview" onclick="window.open('${gift.link.trim()}', '_blank')">
+                <i class="fas fa-external-link-alt"></i> Посмотреть
+            </button>
+            <button class="btn btn-reserve" onclick="openReserveModal(${gift.id})">
+                <i class="fas fa-gift"></i> Забронировать
+            </button>`;
+    }
+}
+
+/* ===== РЕНДЕРИНГ ===== */
+function renderTable() {
+    tableBody.innerHTML = '';
+    gifts.forEach(gift => {
+        const commentHtml = gift.comment ? `<div class="comment">${gift.comment}</div>` : '';
+        const isMyBooking = userBookings[gift.id];
+        const row = document.createElement('tr');
+        
+        if (gift.status === 'booked') {
+            row.classList.add('booked-row');
+            // Если это наша бронь, добавляем специальный класс
+            if (isMyBooking) {
+                row.classList.add('my-booking-row');
+            }
+        }
+        
+        row.innerHTML = `
+            <td>${gift.id}</td>
+            <td><strong>${gift.name}</strong>${commentHtml}</td>
+            <td><span class="category">${gift.category}</span></td>
+            <td>${getActionButtons(gift)}</td>
+            <td>${getStatusBadge(gift.status)}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+function renderCards() {
+    cardsContainer.innerHTML = '';
+    gifts.forEach(gift => {
+        const commentHtml = gift.comment ? `<div class="comment">${gift.comment}</div>` : '';
+        const isMyBooking = userBookings[gift.id];
+        const card = document.createElement('div');
+        
+        card.className = `gift-card ${gift.status === 'booked' ? 'booked' : ''}`;
+        if (gift.status === 'booked' && isMyBooking) {
+            card.classList.add('my-booking');
+        }
+        
+        card.innerHTML = `
+            <h3>${gift.name}</h3>
+            ${commentHtml}
+            <div class="category">${gift.category}</div>
+            ${getStatusBadge(gift.status)}
+            <div class="btn-group">${getActionButtons(gift)}</div>
+        `;
+        cardsContainer.appendChild(card);
+    });
+}
+
+function render() {
+    renderTable();
+    renderCards();
+}
+
+function getStatusBadge(status) {
+    return status === 'booked'
+        ? '<span class="status status-booked">Забронировано</span>'
+        : '<span class="status status-free">Свободно</span>';
+}
+
+/* ===== МОДАЛЬНЫЕ ОКНА ===== */
+function openReserveModal(id) {
+    const gift = gifts.find(g => g.id === id);
+    if (gift && gift.status === 'free') {
+        giftToReserve = id;
+        document.getElementById('confirm-reserve-text').textContent = `Забронировать «${gift.name}»?`;
+        confirmReserveModal.style.display = 'flex';
+    }
+}
+
+function openUnbookModal(id) {
+    const gift = gifts.find(g => g.id === id);
+    if (gift && gift.status === 'booked' && userBookings[id]) {
+        giftToUnbook = id;
+        document.getElementById('unbook-text').textContent = 
+            `Вы уверены, что хотите отменить бронирование «${gift.name}»? После отмены он снова станет доступен для других гостей.`;
+        unbookModal.style.display = 'flex';
+    } else {
+        // Пытаются отменить чужую бронь - показываем сообщение
+        showNotification('Вы можете отменять только свои бронирования', 'warning');
+    }
+}
+
+/* ===== ОБРАБОТЧИКИ КНОПОК ===== */
 document.getElementById('confirm-reserve').onclick = async () => {
-  if (giftToReserve !== null) {
-    await updateStatus(giftToReserve, 'booked');
+    if (giftToReserve !== null) {
+        const success = await updateStatus(giftToReserve, 'booked', true);
+        if (success) {
+            confirmReserveModal.style.display = 'none';
+            showNotification('Подарок успешно забронирован!', 'success');
+        }
+        giftToReserve = null;
+    }
+};
+
+document.getElementById('cancel-reserve').onclick = () => {
     confirmReserveModal.style.display = 'none';
     giftToReserve = null;
-  }
 };
 
 document.getElementById('confirm-unbook').onclick = async () => {
-  if (giftToUnbook !== null) {
-    await updateStatus(giftToUnbook, 'free');
-    unbookModal.style.display = 'none';
-    giftToUnbook = null;
-  }
+    if (giftToUnbook !== null) {
+        const success = await updateStatus(giftToUnbook, 'free', true);
+        if (success) {
+            unbookModal.style.display = 'none';
+            showNotification('Бронирование отменено!', 'info');
+        }
+        giftToUnbook = null;
+    }
 };
 
-/* ===== СТАРТ ===== */
-document.addEventListener('DOMContentLoaded', () => {
-  render();
-  loadStatuses();
-});
- 
-  // === ОСТАЛЬНОЙ КОД (без изменений) ===
-  function showPlaceholder() {
-    document.getElementById('nastya-photo').style.display = 'none';
-    document.getElementById('photo-placeholder').style.display = 'block';
-  }
-
-  function getStatusBadge(status) {
-    return status === 'booked'
-      ? '<span class="status status-booked">Забронировано</span>'
-      : '<span class="status status-free">Свободно</span>';
-  }
-
-  function getActionButtons(gift) {
-    if (gift.status === 'free') {
-      return `
-        <button class="btn btn-preview" onclick="window.open('${gift.link.trim()}', '_blank')">
-          <i class="fas fa-external-link-alt"></i> Посмотреть
-        </button>
-        <button class="btn btn-reserve" onclick="openReserveModal(${gift.id})">
-          <i class="fas fa-gift"></i> Забронировать
-        </button>`;
-    } else {
-      return `
-        <button class="btn btn-preview" onclick="window.open('${gift.link.trim()}', '_blank')">
-          <i class="fas fa-external-link-alt"></i> Посмотреть
-        </button>
-        <button class="btn btn-unbook" onclick="openUnbookModal(${gift.id})">
-          <i class="fas fa-undo"></i> Отменить бронь
-        </button>`;
-    }
-  }
-
-  function renderTable() {
-    tableBody.innerHTML = '';
-    gifts.forEach(gift => {
-      const commentHtml = gift.comment ? `<div class="comment">${gift.comment}</div>` : '';
-      const row = document.createElement('tr');
-      if (gift.status === 'booked') row.classList.add('booked-row');
-      row.innerHTML = `
-        <td>${gift.id}</td>
-        <td><strong>${gift.name}</strong>${commentHtml}</td>
-        <td><span class="category">${gift.category}</span></td>
-        <td>${getActionButtons(gift)}</td>
-        <td>${getStatusBadge(gift.status)}</td>
-      `;
-      tableBody.appendChild(row);
-    });
-  }
-
-  function renderCards() {
-    cardsContainer.innerHTML = '';
-    gifts.forEach(gift => {
-      const commentHtml = gift.comment ? `<div class="comment">${gift.comment}</div>` : '';
-      const card = document.createElement('div');
-      card.className = `gift-card ${gift.status === 'booked' ? 'booked' : ''}`;
-      card.innerHTML = `
-        <h3>${gift.name}</h3>
-        ${commentHtml}
-        <div class="category">${gift.category}</div>
-        ${getStatusBadge(gift.status)}
-        <div class="btn-group">${getActionButtons(gift)}</div>
-      `;
-      cardsContainer.appendChild(card);
-    });
-  }
-
-  function render() {
-    renderTable();
-    renderCards();
-  }
-
-  function openReserveModal(id) {
-    const gift = gifts.find(g => g.id === id);
-    if (gift && gift.status === 'free') {
-      giftToReserve = id;
-      document.getElementById('confirm-reserve-text').textContent = `Забронировать «${gift.name}»?`;
-      confirmReserveModal.style.display = 'flex';
-    }
-  }
-
-  document.getElementById('confirm-reserve').addEventListener('click', () => {
-    if (giftToReserve !== null) {
-      updateStatus(giftToReserve, 'booked');
-      confirmReserveModal.style.display = 'none';
-      giftToReserve = null;
-    }
-  });
-
-  document.getElementById('cancel-reserve').onclick = () => {
-    confirmReserveModal.style.display = 'none';
-    giftToReserve = null;
-  };
-
-  function openUnbookModal(id) {
-    giftToUnbook = id;
-    unbookModal.style.display = 'flex';
-  }
-
-  document.getElementById('confirm-unbook').addEventListener('click', () => {
-    if (giftToUnbook !== null) {
-      updateStatus(giftToUnbook, 'free');
-      unbookModal.style.display = 'none';
-      giftToUnbook = null;
-    }
-  });
-
-  document.getElementById('cancel-unbook').onclick = () => {
+document.getElementById('cancel-unbook').onclick = () => {
     unbookModal.style.display = 'none';
     giftToUnbook = null;
-  };
+};
 
-  function showNotification(message, type) {
+/* ===== УВЕДОМЛЕНИЯ ===== */
+function showNotification(message, type) {
     let n = document.getElementById('custom-notification');
     if (!n) {
-      n = document.createElement('div');
-      n.id = 'custom-notification';
-      document.body.appendChild(n);
+        n = document.createElement('div');
+        n.id = 'custom-notification';
+        document.body.appendChild(n);
     }
+    
     const cfg = {
-      success: { bg: '#c8e6c9', color: '#1b5e20', icon: 'check-circle' },
-      info: { bg: '#fff3e0', color: '#e65100', icon: 'info-circle' }
+        success: { bg: '#c8e6c9', color: '#1b5e20', icon: 'check-circle' },
+        info: { bg: '#fff3e0', color: '#e65100', icon: 'info-circle' },
+        warning: { bg: '#ffecb3', color: '#e65100', icon: 'exclamation-triangle' },
+        error: { bg: '#ffcdd2', color: '#b71c1c', icon: 'exclamation-circle' }
     }[type] || { bg: '#ffcdd2', color: '#b71c1c', icon: 'exclamation-circle' };
+    
     n.style.background = cfg.bg;
     n.style.color = cfg.color;
     n.innerHTML = `<i class="fas fa-${cfg.icon}"></i> ${message}`;
     n.style.transform = 'translateX(0)';
     setTimeout(() => n.style.transform = 'translateX(150%)', 3000);
-  }
+}
 
-  window.onclick = (e) => {
+/* ===== ИНИЦИАЛИЗАЦИЯ ===== */
+function showPlaceholder() {
+    document.getElementById('nastya-photo').style.display = 'none';
+    document.getElementById('photo-placeholder').style.display = 'block';
+}
+
+window.onclick = (e) => {
     if (e.target === confirmReserveModal) {
-      confirmReserveModal.style.display = 'none';
-      giftToReserve = null;
+        confirmReserveModal.style.display = 'none';
+        giftToReserve = null;
     }
     if (e.target === unbookModal) {
-      unbookModal.style.display = 'none';
-      giftToUnbook = null;
+        unbookModal.style.display = 'none';
+        giftToUnbook = null;
     }
-  };
+};
 
-  document.addEventListener('DOMContentLoaded', () => {
-    loadFromServer();
-    document.getElementById('nastya-photo').onerror = showPlaceholder;
-  });
+document.addEventListener('DOMContentLoaded', () => {
+    // Генерируем/получаем ID пользователя
+    userId = generateUserId();
+    console.log('User ID:', userId);
+    
+    // Загружаем данные и рендерим
+    loadStatuses();
+    
+    // Настраиваем обработчик ошибки фото
+    const photo = document.getElementById('nastya-photo');
+    if (photo) {
+        photo.onerror = showPlaceholder;
+    } else {
+        showPlaceholder();
+    }
+});
 </script>
 </body>
 </html>
