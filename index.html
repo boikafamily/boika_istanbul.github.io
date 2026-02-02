@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <style>
-    /* ВСЕ СТИЛИ ОСТАЮТСЯ БЕЗ ИЗМЕНЕНИЙ КАК В ИСХОДНОМ КОДЕ */
     :root {
       --background: hsl(30, 50%, 98%);
       --foreground: hsl(200, 30%, 15%);
@@ -1339,6 +1338,140 @@
       from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
       to { opacity: 1; transform: translateX(-50%) translateY(0); }
     }
+
+    /* ============= НОВЫЕ СТИЛИ ДЛЯ РЕДАКТИРОВАНИЯ И СВОДКИ ============= */
+    
+    /* Сводка по категориям */
+    .categories-summary {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 24px;
+    }
+    
+    .categories-summary-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    
+    .categories-summary-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+    }
+    
+    .categories-summary-total {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+    }
+    
+    .category-summary-item {
+      background: var(--muted);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    
+    .category-summary-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    
+    .category-summary-emoji {
+      font-size: 1.25rem;
+    }
+    
+    .category-summary-name {
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    
+    .category-summary-amount {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--foreground);
+    }
+    
+    .category-summary-count {
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+    }
+    
+    /* Кнопки редактирования */
+    .expense-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .edit-btn, .delete-btn {
+      width: 32px;
+      height: 32px;
+      background: transparent;
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .edit-btn:hover {
+      background: hsla(181, 80%, 26%, 0.1);
+    }
+    
+    .edit-btn svg {
+      width: 16px;
+      height: 16px;
+      color: var(--primary);
+    }
+    
+    .delete-btn:hover {
+      background: hsla(0, 84%, 60%, 0.1);
+    }
+    
+    .delete-btn svg {
+      width: 16px;
+      height: 16px;
+      color: hsl(0, 84%, 60%);
+    }
+    
+    /* Модальное окно редактирования */
+    .edit-modal .modal-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .delete-modal-btn {
+      background: hsl(0, 84%, 60%);
+      color: white;
+      border: none;
+    }
+    
+    .delete-modal-btn:hover {
+      background: hsl(0, 84%, 50%);
+    }
+    
+    /* Пустая сводка */
+    .empty-summary {
+      text-align: center;
+      padding: 20px;
+      color: var(--muted-foreground);
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
@@ -1635,14 +1768,17 @@
         <div class="category-tags" id="category-breakdown"></div>
       </div>
 
+      <!-- НОВАЯ СЕКЦИЯ: Сводка по категориям -->
+      <div class="categories-summary" id="categories-summary"></div>
+
       <div id="expenses-list"></div>
     </div>
   </div>
 
-  <!-- ADD EXPENSE MODAL -->
+  <!-- ADD/EDIT EXPENSE MODAL -->
   <div class="modal-overlay" id="expense-modal">
     <div class="modal">
-      <h3>Новый расход</h3>
+      <h3 id="modal-title">Новый расход</h3>
       
       <div class="form-group">
         <label class="form-label">
@@ -1686,9 +1822,16 @@
         <input type="text" id="expense-desc" class="form-input" placeholder="Что купили...">
       </div>
 
-      <div class="modal-actions">
+      <div class="modal-actions" id="modal-actions">
         <button class="cancel-btn" onclick="closeModal()">Отмена</button>
-        <button class="submit-btn" onclick="addExpense()">Добавить</button>
+        <button class="submit-btn" onclick="saveExpense()">Добавить</button>
+      </div>
+      
+      <!-- Кнопка удаления (только для режима редактирования) -->
+      <div class="modal-actions edit-modal" id="edit-actions" style="display: none; margin-top: 8px;">
+        <button class="cancel-btn delete-modal-btn" onclick="deleteExpenseFromModal()" style="flex: 1;">
+          Удалить расход
+        </button>
       </div>
     </div>
   </div>
@@ -1869,10 +2012,10 @@
     let expandedDay = 0;
     let selectedCategory = 'food';
     let supabaseClient = null;
+    let editingExpenseId = null;
 
     // ============= SUPABASE INTEGRATION =============
     function initSupabase() {
-      // Проверяем, есть ли Supabase в глобальной области видимости
       if (typeof supabase !== 'undefined' && supabase.createClient) {
         try {
           supabaseClient = supabase.createClient(
@@ -1919,7 +2062,6 @@
       
       window.scrollTo(0, 0);
       
-      // Если переходим на страницу расходов, загружаем данные
       if (pageName === 'expenses') {
         loadExpenses();
       }
@@ -2138,30 +2280,103 @@
       resultDetail.textContent = `${amount.toFixed(2)} ${currencySymbols[from]} = ${result.toFixed(2)} ${currencySymbols[to]}`;
     }
 
-    // ============= EXPENSES PAGE =============
-   async function loadExpenses() {
-  try {
-    if (supabaseClient) {
-      const { data, error } = await supabaseClient
-        .from('expenses')
-        .select('*')
-        .order('date', { ascending: false });
-
-      if (error) throw error;
-      expenses = data || [];
-      showStatus('Данные загружены из базы');
-    } else {
-      const localExpenses = localStorage.getItem('istanbul-expenses');
-      expenses = localExpenses ? JSON.parse(localExpenses) : [];
+    // ============= РЕНДЕРИНГ СВОДКИ ПО КАТЕГОРИЯМ =============
+    function renderCategoriesSummary() {
+      const container = document.getElementById('categories-summary');
+      if (!container) return;
+      
+      const categoryStats = {};
+      
+      expenses.forEach(expense => {
+        const amountInBYN = expense.amount * toBYN[expense.currency];
+        
+        if (!categoryStats[expense.category]) {
+          categoryStats[expense.category] = {
+            total: 0,
+            count: 0
+          };
+        }
+        
+        categoryStats[expense.category].total += amountInBYN;
+        categoryStats[expense.category].count++;
+      });
+      
+      const sortedCategories = Object.entries(categoryStats)
+        .map(([category, stats]) => ({
+          category,
+          ...stats,
+          ...categories[category]
+        }))
+        .sort((a, b) => b.total - a.total);
+      
+      const totalSpent = sortedCategories.reduce((sum, cat) => sum + cat.total, 0);
+      
+      if (sortedCategories.length === 0) {
+        container.innerHTML = `
+          <div class="categories-summary">
+            <div class="empty-summary">
+              <p>Пока нет расходов по категориям</p>
+            </div>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = `
+        <div class="categories-summary">
+          <div class="categories-summary-header">
+            <h3 class="categories-summary-title">Расходы по категориям</h3>
+            <div class="categories-summary-total">${totalSpent.toFixed(2)} BYN</div>
+          </div>
+          <div class="categories-grid">
+            ${sortedCategories.map(cat => `
+              <div class="category-summary-item">
+                <div class="category-summary-header">
+                  <span class="category-summary-emoji">${cat.emoji}</span>
+                  <span class="category-summary-name">${cat.label}</span>
+                </div>
+                <div class="category-summary-amount">${cat.total.toFixed(2)} BYN</div>
+                <div class="category-summary-count">${cat.count} ${cat.count === 1 ? 'расход' : cat.count < 5 ? 'расхода' : 'расходов'}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
     }
-  } catch (error) {
-    console.error('Ошибка загрузки расходов:', error);
-    const localExpenses = localStorage.getItem('istanbul-expenses');
-    expenses = localExpenses ? JSON.parse(localExpenses) : [];
-  }
-  renderExpenses();
-}
 
+    // ============= ФУНКЦИИ ДЛЯ РЕДАКТИРОВАНИЯ =============
+    function openEditModal(expenseId) {
+      const expense = expenses.find(e => e.id === expenseId);
+      if (!expense) return;
+      
+      editingExpenseId = expenseId;
+      
+      document.getElementById('modal-title').textContent = 'Редактировать расход';
+      document.getElementById('expense-date').value = expense.date;
+      document.getElementById('expense-amount').value = expense.amount;
+      document.getElementById('expense-currency').value = expense.currency;
+      document.getElementById('expense-desc').value = expense.description || '';
+      selectedCategory = expense.category;
+      
+      document.getElementById('modal-actions').innerHTML = `
+        <button class="cancel-btn" onclick="closeModal()">Отмена</button>
+        <button class="submit-btn" onclick="saveExpense()">Сохранить</button>
+      `;
+      
+      document.getElementById('edit-actions').style.display = 'flex';
+      
+      renderCategoryGrid();
+      document.getElementById('expense-modal').classList.add('active');
+    }
+    
+    function deleteExpenseFromModal() {
+      if (!confirm('Удалить этот расход?')) return;
+      
+      deleteExpense(editingExpenseId);
+      closeModal();
+    }
+
+    // ============= ОБНОВЛЕННЫЙ РЕНДЕРИНГ РАСХОДОВ =============
     function renderExpenses() {
       const totalSpent = document.getElementById('total-spent');
       const categoryBreakdown = document.getElementById('category-breakdown');
@@ -2171,27 +2386,27 @@
       
       const totalBYN = expenses.reduce((sum, e) => sum + e.amount * toBYN[e.currency], 0);
       totalSpent.textContent = `${totalBYN.toFixed(2)} BYN`;
-
-      // Category breakdown
+      
       const byCategory = expenses.reduce((acc, e) => {
         if (!acc[e.category]) acc[e.category] = 0;
         acc[e.category] += e.amount * toBYN[e.currency];
         return acc;
       }, {});
-
+      
       categoryBreakdown.innerHTML = Object.entries(byCategory)
         .map(([cat, amount]) => `<span class="category-tag ${cat}">${categories[cat].emoji} ${amount.toFixed(0)} BYN</span>`)
         .join('');
-
-      // Group by date
+      
+      renderCategoriesSummary();
+      
       const byDate = expenses.reduce((acc, e) => {
         if (!acc[e.date]) acc[e.date] = [];
         acc[e.date].push(e);
         return acc;
       }, {});
-
+      
       const sortedDates = Object.keys(byDate).sort((a, b) => new Date(b) - new Date(a));
-
+      
       if (sortedDates.length === 0) {
         expensesList.innerHTML = `
           <div class="empty-state">
@@ -2204,7 +2419,7 @@
         `;
         return;
       }
-
+      
       expensesList.innerHTML = sortedDates.map(date => `
         <div class="expense-date-group">
           <p class="expense-date">${formatDate(date)}</p>
@@ -2217,9 +2432,14 @@
                   <p class="expense-desc">${e.description || categories[e.category].label}</p>
                 </div>
               </div>
-              <button class="delete-btn" onclick="deleteExpense('${e.id}')">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-              </button>
+              <div class="expense-actions">
+                <button class="edit-btn" onclick="openEditModal('${e.id}')">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                </button>
+                <button class="delete-btn" onclick="deleteExpense('${e.id}')">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                </button>
+              </div>
             </div>
           `).join('')}
         </div>
@@ -2233,18 +2453,155 @@
       return `${days[date.getDay()]}, ${date.getDate()} ${months[date.getMonth()]}`;
     }
 
+    // ============= ОБНОВЛЕННЫЕ ФУНКЦИИ МОДАЛЬНОГО ОКНА =============
     function openModal() {
+      editingExpenseId = null;
+      
+      document.getElementById('modal-title').textContent = 'Новый расход';
       document.getElementById('expense-date').value = new Date().toISOString().split('T')[0];
       document.getElementById('expense-amount').value = '';
       document.getElementById('expense-currency').value = 'TRY';
       document.getElementById('expense-desc').value = '';
       selectedCategory = 'food';
+      
+      document.getElementById('modal-actions').innerHTML = `
+        <button class="cancel-btn" onclick="closeModal()">Отмена</button>
+        <button class="submit-btn" onclick="saveExpense()">Добавить</button>
+      `;
+      
+      document.getElementById('edit-actions').style.display = 'none';
+      
       renderCategoryGrid();
       document.getElementById('expense-modal').classList.add('active');
     }
 
     function closeModal() {
+      editingExpenseId = null;
       document.getElementById('expense-modal').classList.remove('active');
+    }
+
+    // ============= УНИВЕРСАЛЬНАЯ ФУНКЦИЯ СОХРАНЕНИЯ =============
+    async function saveExpense() {
+      const amountInput = document.getElementById('expense-amount');
+      const amount = parseFloat(amountInput.value);
+      
+      if (!amount || amount <= 0) {
+        showStatus('Введите корректную сумму', 'error');
+        return;
+      }
+
+      const expenseData = {
+        date: document.getElementById('expense-date').value,
+        amount: amount,
+        currency: document.getElementById('expense-currency').value,
+        category: selectedCategory,
+        description: document.getElementById('expense-desc').value
+      };
+
+      try {
+        if (editingExpenseId) {
+          await updateExpense(editingExpenseId, expenseData);
+        } else {
+          await addExpense(expenseData);
+        }
+        
+        closeModal();
+        renderExpenses();
+        
+      } catch (error) {
+        console.error('Ошибка сохранения расхода:', error);
+        showStatus('Ошибка сохранения', 'error');
+      }
+    }
+
+    // ============= ФУНКЦИИ ДЛЯ РАБОТЫ С БАЗОЙ =============
+    async function addExpense(expenseData) {
+      expenseData.user_id = 'default_user';
+      
+      if (supabaseClient) {
+        const { data, error } = await supabaseClient
+          .from('expenses')
+          .insert([expenseData])
+          .select();
+        
+        if (error) throw error;
+        
+        expenses.unshift(data[0]);
+        localStorage.setItem('istanbul-expenses', JSON.stringify(expenses));
+        showStatus('Расход добавлен!', 'success');
+      } else {
+        expenseData.id = Date.now().toString();
+        expenses.unshift(expenseData);
+        localStorage.setItem('istanbul-expenses', JSON.stringify(expenses));
+        showStatus('Расход добавлен локально', 'success');
+      }
+    }
+
+    async function updateExpense(expenseId, expenseData) {
+      if (supabaseClient) {
+        const { error } = await supabaseClient
+          .from('expenses')
+          .update(expenseData)
+          .eq('id', expenseId);
+        
+        if (error) throw error;
+      }
+      
+      const index = expenses.findIndex(e => e.id === expenseId);
+      if (index !== -1) {
+        expenses[index] = { ...expenses[index], ...expenseData };
+        localStorage.setItem('istanbul-expenses', JSON.stringify(expenses));
+      }
+      
+      showStatus('Расход обновлен!', 'success');
+    }
+
+    async function deleteExpense(expenseId) {
+      if (!confirm('Удалить этот расход?')) return;
+      
+      try {
+        if (supabaseClient) {
+          const { error } = await supabaseClient
+            .from('expenses')
+            .delete()
+            .eq('id', expenseId);
+          
+          if (error) throw error;
+        }
+        
+        expenses = expenses.filter(e => e.id !== expenseId);
+        localStorage.setItem('istanbul-expenses', JSON.stringify(expenses));
+        renderExpenses();
+        showStatus('Расход удален', 'success');
+        
+      } catch (error) {
+        console.error('Ошибка удаления расхода:', error);
+        showStatus('Ошибка удаления', 'error');
+      }
+    }
+
+    // ============= EXPENSES PAGE =============
+    async function loadExpenses() {
+      try {
+        if (supabaseClient) {
+          const { data, error } = await supabaseClient
+            .from('expenses')
+            .select('*')
+            .order('date', { ascending: false });
+
+          if (error) throw error;
+          expenses = data || [];
+          showStatus('Данные загружены из базы');
+        } else {
+          const localExpenses = localStorage.getItem('istanbul-expenses');
+          expenses = localExpenses ? JSON.parse(localExpenses) : [];
+        }
+      } catch (error) {
+        console.error('Ошибка загрузки расходов:', error);
+        const localExpenses = localStorage.getItem('istanbul-expenses');
+        expenses = localExpenses ? JSON.parse(localExpenses) : [];
+      }
+      renderExpenses();
     }
 
     function renderCategoryGrid() {
@@ -2264,95 +2621,8 @@
       renderCategoryGrid();
     }
 
-   async function addExpense() {
-  const amountInput = document.getElementById('expense-amount');
-  const amount = parseFloat(amountInput.value);
-  if (!amount || amount <= 0) {
-    showStatus('Введите корректную сумму', 'error');
-    return;
-  }
-
-  const expense = {
-    // id: Date.now().toString(), ← УДАЛЯЕМ! Supabase сгенерирует UUID автоматически
-    user_id: 'default_user', // явно указываем, чтобы гарантировать работу при отсутствии DEFAULT
-    date: document.getElementById('expense-date').value,
-    amount: amount,
-    currency: document.getElementById('expense-currency').value,
-    category: selectedCategory,
-    description: document.getElementById('expense-desc').value
-    // created_at — НЕ ПЕРЕДАЁМ, её нет в таблице
-  };
-
-  try {
-    // Сохраняем в Supabase
-    if (supabaseClient) {
-      const { data, error } = await supabaseClient
-        .from('expenses')
-        .insert([expense])
-        .select(); // получаем вставленную запись с id (UUID)
-
-      if (error) throw error;
-
-      // Обновляем локальный массив и localStorage
-      expenses.unshift(data[0]); // добавляем именно вставленную запись (с UUID)
-      localStorage.setItem('istanbul-expenses', JSON.stringify(expenses));
-      showStatus('Расход сохранён в базе данных!', 'success');
-    } else {
-      // Запасной вариант: только localStorage
-      expense.id = Date.now().toString(); // для совместимости с renderExpenses()
-      expenses.unshift(expense);
-      localStorage.setItem('istanbul-expenses', JSON.stringify(expenses));
-      showStatus('Сохранено локально (база недоступна)', 'error');
-    }
-
-    renderExpenses();
-    closeModal();
-  } catch (error) {
-    console.error('Ошибка вставки в Supabase:', error);
-    // Всегда сохраняем локально, даже при ошибке базы
-    expense.id = Date.now().toString();
-    expenses.unshift(expense);
-    localStorage.setItem('istanbul-expenses', JSON.stringify(expenses));
-    showStatus('Сохранено локально. Ошибка связи с базой', 'error');
-    renderExpenses();
-    closeModal();
-  }
-}
-
-    async function deleteExpense(id) {
-      if (!confirm('Удалить этот расход?')) return;
-      
-      try {
-        // Удаляем из Supabase, если он доступен
-        if (supabaseClient) {
-          const { error } = await supabaseClient
-            .from('expenses')
-            .delete()
-            .eq('id', id);
-          
-          if (error) throw error;
-        }
-        
-        // Удаляем из локального массива
-        expenses = expenses.filter(e => e.id !== id);
-        localStorage.setItem('istanbul-expenses', JSON.stringify(expenses));
-        renderExpenses();
-        showStatus('Расход удален');
-        
-      } catch (error) {
-        console.error('Ошибка удаления расхода:', error);
-        showStatus('Ошибка удаления из базы', 'error');
-        
-        // Все равно удаляем локально
-        expenses = expenses.filter(e => e.id !== id);
-        localStorage.setItem('istanbul-expenses', JSON.stringify(expenses));
-        renderExpenses();
-      }
-    }
-
     // ============= INIT =============
     document.addEventListener('DOMContentLoaded', () => {
-      // Загружаем данные из localStorage
       try {
         const visitedData = localStorage.getItem('istanbul-visited');
         const expensesData = localStorage.getItem('istanbul-expenses');
@@ -2363,10 +2633,8 @@
         console.error('Ошибка загрузки данных из localStorage:', e);
       }
       
-      // Инициализируем Supabase (позже, после загрузки страницы)
       setTimeout(initSupabase, 100);
       
-      // Инициализируем страницы
       renderDays();
       renderRestaurants();
       renderShops();
@@ -2374,7 +2642,6 @@
       renderCategoryGrid();
       renderExpenses();
       
-      // Добавляем скрипт для погоды
       const script = document.createElement('script');
       script.async = true;
       script.src = '//nuipogoda.ru/informer/nuipogoda.js';
@@ -2384,16 +2651,14 @@
     });
   </script>
   
-  <!-- Загружаем Supabase JS асинхронно, чтобы не блокировать загрузку -->
+  <!-- Загружаем Supabase JS -->
   <script>
-    // Загружаем Supabase асинхронно
     (function() {
       const script = document.createElement('script');
       script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
       script.async = true;
       script.onload = function() {
         console.log('Supabase JS загружен');
-        // Инициализируем Supabase после загрузки библиотеки
         if (typeof initSupabase === 'function') {
           initSupabase();
         }
