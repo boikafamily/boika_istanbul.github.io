@@ -1383,15 +1383,23 @@
           <h3 class="card-title">Погода в Стамбуле</h3>
         </div>
         
-        <!-- Виджет "Ну и погода" -->
-        <div style="display: flex; justify-content: center; align-items: center; min-height: 300px; padding: 16px;">
-          <a class="nuipogoda-iframe-informer" data-nuipogoda="informer3" href="https://stambul.nuipogoda.ru" style="width:284px;height:263px;display:block;box-shadow: 0 0 5px #999; border-radius: 12px; overflow: hidden;">НУ И ПОГОДА</a>
-        </div>
-        
-        <p class="text-xs text-muted" style="text-align: center; margin-top: 8px;">Данные от Ну и погода</p>
-      </div>
-    </div>
-
+        <!-- Виджет "Яндекс.Погода" -->
+        <div style="width: 250px; background: #fff; padding: 10px; border-radius: 8px; font-family: Arial, sans-serif;">
+  <a href="https://yandex.ru/pogoda/СТАМБУЛ" target="_blank" style="text-decoration: none; color: #000; font-weight: bold; font-size: 16px;">
+    Погода в Стамбуле
+  </a>
+  <div id="yandex-weather-widget"></div>
+  <script>
+    (function (d, n) {
+      var tag = d.createElement('script');
+      tag.type = 'text/javascript';
+      tag.async = true;
+      tag.src = 'https://api-maps.yandex.ru/services/iframe-pogoda/v1/?id=yandex-weather-widget&city=СТАМБУЛ&lang=ru&theme=light';
+      tag.charset = 'utf-8';
+      d.body.appendChild(tag);
+    })(document, 'script');
+  </script>
+</div>
     <section class="section">
       <h2 class="section-title">О Стамбуле</h2>
       <div class="card">
