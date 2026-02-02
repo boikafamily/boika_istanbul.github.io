@@ -1339,7 +1339,45 @@
       to { opacity: 1; transform: translateX(-50%) translateY(0); }
     }
 
-    /* ============= НОВЫЕ СТИЛИ ДЛЯ РЕДАКТИРОВАНИЯ И СВОДКИ ============= */
+    /* ============= НОВЫЕ СТИЛИ ДЛЯ СВОДКИ РАСХОДОВ В ТРЕХ ВАЛЮТАХ ============= */
+    
+    /* Общая сумма в трех валютах */
+    .total-currency-breakdown {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    
+    .currency-amount {
+      text-align: center;
+      flex: 1;
+    }
+    
+    .currency-amount-label {
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      margin-bottom: 4px;
+    }
+    
+    .currency-amount-value {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--foreground);
+    }
+    
+    .currency-amount-value.byn {
+      color: var(--primary);
+    }
+    
+    .currency-amount-value.eur {
+      color: #0057b7;
+    }
+    
+    .currency-amount-value.usd {
+      color: #1a8754;
+    }
     
     /* Сводка по категориям */
     .categories-summary {
@@ -1528,8 +1566,12 @@
           <span class="value">≈ 6,5 BYN</span>
         </div>
         <div class="info-row text-sm">
-          <span class="text-muted">100 TRY</span>
-          <span class="value">≈ 1,93 EUR</span>
+          <span class="text-muted">1 EUR</span>
+          <span class="value">≈ 3,4 BYN</span>
+        </div>
+        <div class="info-row text-sm">
+          <span class="text-muted">1 USD</span>
+          <span class="value">≈ 2,9 BYN</span>
         </div>
       </div>
 
@@ -1688,8 +1730,12 @@
             <p class="to">≈ 6,5 BYN</p>
           </div>
           <div class="rate-item">
-            <p class="from">100 TRY</p>
-            <p class="to">≈ 1,93 EUR</p>
+            <p class="from">1 EUR</p>
+            <p class="to">≈ 3,4 BYN</p>
+          </div>
+          <div class="rate-item">
+            <p class="from">1 USD</p>
+            <p class="to">≈ 2,9 BYN</p>
           </div>
         </div>
       </div>
@@ -1697,7 +1743,7 @@
       <div class="calculator">
         <div class="calc-input-group">
           <label class="calc-label">Сумма</label>
-          <input type="number" id="calc-amount" class="calc-input" value="100" placeholder="0">
+          <input type="number" id="calc-amount" class="calc-input" value="100" placeholder="0" step="0.01" min="0">
         </div>
 
         <div class="quick-amounts" id="quick-amounts"></div>
@@ -1765,6 +1811,12 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
           </button>
         </div>
+        
+        <!-- НОВЫЙ БЛОК: Сводка в трех валютах -->
+        <div class="total-currency-breakdown" id="currency-breakdown">
+          <!-- Заполняется через JavaScript -->
+        </div>
+        
         <div class="category-tags" id="category-breakdown"></div>
       </div>
 
@@ -1795,7 +1847,7 @@
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
               Сумма
             </label>
-            <input type="number" id="expense-amount" class="form-input" placeholder="0.00">
+            <input type="number" id="expense-amount" class="form-input" placeholder="0.00" step="0.01" min="0">
           </div>
           <div class="currency-wrapper">
             <label class="form-label">Валюта</label>
@@ -2003,18 +2055,48 @@
     };
 
     const currencySymbols = { TRY: "₺", BYN: "Br", EUR: "€", USD: "$" };
-  const toBYN = {
-  TRY: 0.065,   // 1 TRY = 0.065 BYN (из 100 TRY = 6.5 BYN)
-  BYN: 1,       // базовая валюта
-  EUR: 3.4,     // 1 EUR = 3.4 BYN
-  USD: 2.9      // 1 USD = 2.9 BYN
-};
-   const ratesFromTRY = {
-  TRY: 1,
-  BYN: 0.065,        // 1 TRY = 0.065 BYN
-  EUR: 0.0193,       // 1 TRY = 0.0193 EUR (из 100 TRY = 1.93 EUR)
-  USD: 0.065 / 2.9   // ≈ 0.0224138 — или укажите явно, если есть точное значение
-};
+
+    // ============= ИСПРАВЛЕННЫЕ КУРСЫ ВАЛЮТ =============
+    const exchangeRates = {
+      // Курсы относительно BYN (белорусского рубля)
+      BYN: {
+        BYN: 1,
+        TRY: 15.3846,  // 1 BYN = 15.3846 TRY (из расчета 100 TRY = 6.5 BYN)
+        EUR: 0.2941,   // 1 BYN = 0.2941 EUR (из расчета 1 EUR = 3.4 BYN)
+        USD: 0.3448    // 1 BYN = 0.3448 USD (из расчета 1 USD = 2.9 BYN)
+      },
+      TRY: {
+        BYN: 0.065,    // 1 TRY = 0.065 BYN
+        TRY: 1,
+        EUR: 0.0193,   // 1 TRY = 0.0193 EUR (примерно)
+        USD: 0.0222    // 1 TRY = 0.0222 USD (примерно)
+      },
+      EUR: {
+        BYN: 3.4,      // 1 EUR = 3.4 BYN
+        TRY: 51.8135,  // 1 EUR = 51.8135 TRY
+        EUR: 1,
+        USD: 1.1724    // 1 EUR = 1.1724 USD (примерный курс)
+      },
+      USD: {
+        BYN: 2.9,      // 1 USD = 2.9 BYN
+        TRY: 45.4545,  // 1 USD = 45.4545 TRY
+        EUR: 0.8529,   // 1 USD = 0.8529 EUR
+        USD: 1
+      }
+    };
+
+    // Упрощенная функция конвертации
+    function convertCurrency(amount, fromCurrency, toCurrency) {
+      if (fromCurrency === toCurrency) return amount;
+      
+      if (exchangeRates[fromCurrency] && exchangeRates[fromCurrency][toCurrency]) {
+        return amount * exchangeRates[fromCurrency][toCurrency];
+      }
+      
+      // Если нет прямого курса, конвертируем через BYN
+      const amountInBYN = amount * exchangeRates[fromCurrency].BYN;
+      return amountInBYN * exchangeRates.BYN[toCurrency];
+    }
 
     // ============= STATE =============
     let visited = JSON.parse(localStorage.getItem('istanbul-visited') || '{}');
@@ -2283,11 +2365,46 @@
       
       if (!resultValue || !resultDetail) return;
 
-      const inTRY = amount / ratesFromTRY[from];
-      const result = inTRY * ratesFromTRY[to];
+      // Используем новую функцию конвертации
+      const result = convertCurrency(amount, from, to);
 
       resultValue.textContent = `${currencySymbols[to]} ${result.toFixed(2)}`;
       resultDetail.textContent = `${amount.toFixed(2)} ${currencySymbols[from]} = ${result.toFixed(2)} ${currencySymbols[to]}`;
+    }
+
+    // ============= НОВАЯ ФУНКЦИЯ: Сводка в трех валютах =============
+    function renderCurrencyBreakdown() {
+      const container = document.getElementById('currency-breakdown');
+      if (!container || expenses.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+      
+      // Считаем общую сумму в BYN
+      let totalBYN = 0;
+      expenses.forEach(expense => {
+        const amountInBYN = convertCurrency(expense.amount, expense.currency, 'BYN');
+        totalBYN += amountInBYN;
+      });
+      
+      // Конвертируем в EUR и USD
+      const totalEUR = convertCurrency(totalBYN, 'BYN', 'EUR');
+      const totalUSD = convertCurrency(totalBYN, 'BYN', 'USD');
+      
+      container.innerHTML = `
+        <div class="currency-amount">
+          <div class="currency-amount-label">🇧🇾 BYN</div>
+          <div class="currency-amount-value byn">${totalBYN.toFixed(2)}</div>
+        </div>
+        <div class="currency-amount">
+          <div class="currency-amount-label">🇪🇺 EUR</div>
+          <div class="currency-amount-value eur">${totalEUR.toFixed(2)}</div>
+        </div>
+        <div class="currency-amount">
+          <div class="currency-amount-label">🇺🇸 USD</div>
+          <div class="currency-amount-value usd">${totalUSD.toFixed(2)}</div>
+        </div>
+      `;
     }
 
     // ============= РЕНДЕРИНГ СВОДКИ ПО КАТЕГОРИЯМ =============
@@ -2298,7 +2415,7 @@
       const categoryStats = {};
       
       expenses.forEach(expense => {
-        const amountInBYN = expense.amount * toBYN[expense.currency];
+        const amountInBYN = convertCurrency(expense.amount, expense.currency, 'BYN');
         
         if (!categoryStats[expense.category]) {
           categoryStats[expense.category] = {
@@ -2394,12 +2511,18 @@
       
       if (!totalSpent || !categoryBreakdown || !expensesList) return;
       
-      const totalBYN = expenses.reduce((sum, e) => sum + e.amount * toBYN[e.currency], 0);
+      // Обновляем сводку в трех валютах
+      renderCurrencyBreakdown();
+      
+      const totalBYN = expenses.reduce((sum, e) => {
+        return sum + convertCurrency(e.amount, e.currency, 'BYN');
+      }, 0);
+      
       totalSpent.textContent = `${totalBYN.toFixed(2)} BYN`;
       
       const byCategory = expenses.reduce((acc, e) => {
         if (!acc[e.category]) acc[e.category] = 0;
-        acc[e.category] += e.amount * toBYN[e.currency];
+        acc[e.category] += convertCurrency(e.amount, e.currency, 'BYN');
         return acc;
       }, {});
       
